@@ -1,8 +1,9 @@
 {% comment %}Footer - Landing page{% endcomment %}
-<footer class="footer p-10 bg-base-300 text-base-content">
+<footer class="footer p-10 text-base-content">
   <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
     <div>
-      <span class="font-bold text-xl">{{ brand|default:"SaaS" }}<span class="text-primary">{{ brand_highlight|default:"Boiler" }}</span></span>
+      <span class="font-bold text-xl">{{ brand|default:"SaaS" }}<span class="text-primary">
+          {{ brand_highlight|default:"Boiler" }}</span></span>
       <p class="text-sm opacity-60">{{ tagline|default:"Build faster. Ship more." }}</p>
     </div>
     <div class="flex gap-4">

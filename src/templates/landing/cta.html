@@ -2,9 +2,8 @@
 <section class="py-20 bg-primary text-primary-content">
   <div class="container mx-auto px-4 text-center">
     <h2 class="text-3xl font-bold">{{ title|default:"Ready to Ship?" }}</h2>
-    <p class="mt-4 text-lg opacity-90">{{ subtitle|default:"Start building your SaaS today with our production-ready boilerplate." }}</p>
-    <div class="mt-8">
-      {% include "components/ui/button.html" with text=button_text|default:"Get Started Free" href=button_url|default:"account_signup" variant="secondary" size="lg" icon="fa-solid fa-rocket" %}
-    </div>
+    <p class="mt-4 text-lg opacity-90">
+      {{ subtitle|default:"Start building your SaaS today with our production-ready boilerplate." }}</p>
+
   </div>
 </section>

@@ -1,19 +1,9 @@
 {% comment %}
 Usage: {% include "components/badge.html" with text="New" color="primary" %}
 {% endcomment %}
-<span class="badge inline-flex items-center gap-1 leading-none
-{% if color == 'success' %}
-  border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-100
-{% elif color == 'error' %}
-  border border-red-200 bg-red-100 text-red-800 dark:border-red-900/70 dark:bg-red-950/40 dark:text-red-100
-{% elif color == 'warning' %}
-  border border-amber-200 bg-amber-100 text-amber-900 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-100
-{% elif color == 'neutral' %}
-  border border-base-200 bg-base-200 text-base-content
-{% else %}
-  badge-{{ color|default:'primary' }}
-{% endif %}
-{% if outline and color not in 'success,error,warning,neutral' %} badge-outline{% endif %}
+<span class="badge gap-1
+{% if color %} badge-{{ color }}{% else %} badge-primary{% endif %}
+{% if outline %} badge-outline{% endif %}
 {% if size %} badge-{{ size }}{% endif %}
 {% if class %} {{ class }}{% endif %}">
   {% if icon %}<i class="{{ icon }} leading-none"></i>{% endif %}<span class="leading-none">{{ text }}</span>

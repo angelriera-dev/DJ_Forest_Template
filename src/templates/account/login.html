@@ -20,8 +20,8 @@
           <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
           {% endif %}
 
-          {% include "components/ui/input.html" with id="id_login" name="login" type="email" label="Email" placeholder="you@example.com" required=True %}
-          {% include "components/ui/input.html" with id="id_password" name="password" type="password" label="Password" placeholder="••••••••" required=True no_margin=True %}
+          {% include "components/ui/input.html" with field=form.login placeholder="you@example.com" %}
+          {% include "components/ui/input.html" with field=form.password placeholder="••••••••" %}
 
           <div class="flex items-center justify-between gap-4">
             <label class="label cursor-pointer gap-2 p-0 justify-start">
