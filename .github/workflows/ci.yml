@@ -39,8 +39,7 @@ jobs:
       #  run: uv run pyright src
 
       - name: Security Scan (Bandit)
-        run: uv run bandit -r src/apps/ src/config/
-
+        run: uv run bandit -r src/apps/ src/config/ --ini .bandit
   tests:
     name: Tests
     runs-on: ubuntu-latest

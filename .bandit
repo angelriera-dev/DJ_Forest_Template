@@ -1,0 +1,2 @@
+[bandit]
+exclude: src/apps/*/tests.py,src/apps/*/tests/*

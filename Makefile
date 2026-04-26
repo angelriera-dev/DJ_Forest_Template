@@ -12,9 +12,10 @@ else
     UV_CMD := uv
 endif
 
-install: init
-
 init:
+	uv sync
+
+env:
 	@echo "Initializing environment with uv..."
 	@if [ -z "$(UV)" ] && [ ! -f $(PYTHON) ]; then \
 		python3 -m venv $(VENV) && \
@@ -52,7 +53,7 @@ check_types:
 
 security_scan:
 	@echo "Running Bandit (Security Linter)..."
-	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/
+	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit
 	@echo "Running Semgrep (OWASP Scans)..."
 	$(UV_CMD) run semgrep scan --config auto $(SRC_DIR)
 

@@ -18,3 +18,4 @@ semgrep==1.106.0
 
 # Automation
 pre-commit==4.1.0
+uv=0.11.7
