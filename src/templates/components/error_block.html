@@ -1,15 +1,33 @@
-{% if form.errors %}
-<div class="alert alert-error items-start">
-  <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
-  <div>
-    <h3 class="text-sm font-medium">Error</h3>
-    <ul class="mt-2 list-disc pl-5 text-sm leading-6">
-        {% for field, errors in form.errors.items %}
-        {% for error in errors %}
-        <li>{{ error }}</li>
+{% load static %}
+
+{% if form.errors or messages %}
+<div class="space-y-3">
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            {% include "components/alert.html" with type="error" text=error icon="fa-solid fa-circle-exclamation" dismissible=True %}
         {% endfor %}
+    {% endif %}
+
+    {% if form.errors and not form.non_field_errors %}
+        <div class="alert alert-error shadow-sm border items-start">
+            <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+            <div class="w-full">
+                <h3 class="font-bold text-sm">Please correct the following errors:</h3>
+                <ul class="list-disc list-inside text-xs mt-1 opacity-90">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% include "components/alert.html" with type=message.tags text=message icon="fa-solid fa-circle-info" dismissible=True %}
         {% endfor %}
-      </ul>
-  </div>
+    {% endif %}
 </div>
 {% endif %}

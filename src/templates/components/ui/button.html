@@ -8,16 +8,23 @@ Variables:
 
 {% if href %}
 <a href="{{ href }}"
-   class="btn inline-flex items-center justify-center gap-2 {{ class|default:'' }} {% if variant %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %}"
+   class="btn gap-2 {{ class|default:'' }} {% if variant %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} transition-all duration-200"
    {% if disabled %}aria-disabled="true" style="pointer-events: none; opacity: 0.5;"{% endif %}>
-    {% if icon %}<i class="{{ icon }} {% if icon_position != 'right' %}me-1{% else %}ms-1{% endif %}"></i>{% endif %}
-    <span class="leading-none">{{ text }}</span>
+    {% if icon and icon_position != 'right' %}<i class="{{ icon }}"></i>{% endif %}
+    <span>{{ text }}</span>
+    {% if icon and icon_position == 'right' %}<i class="{{ icon }}"></i>{% endif %}
 </a>
 {% else %}
 <button type="{{ type|default:'button' }}"
         {% if disabled %}disabled{% endif %}
-        class="btn inline-flex items-center justify-center gap-2 {{ class|default:'' }} {% if variant %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %}">
-    {% if icon %}<i class="{{ icon }} {% if icon_position != 'right' %}me-1{% else %}ms-1{% endif %}"></i>{% endif %}
-    <span class="leading-none">{{ text }}</span>
+        class="btn gap-2 {{ class|default:'' }} {% if variant %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} group transition-all duration-200"
+        {% if hx_post %}hx-post="{{ hx_post }}"{% endif %}
+        {% if hx_target %}hx-target="{{ hx_target }}"{% endif %}
+        {% if hx_swap %}hx-swap="{{ hx_swap }}"{% endif %}
+        {% if hx_indicator %}hx-indicator="{{ hx_indicator }}"{% endif %}>
+    <span class="loading loading-spinner loading-xs hidden group-[.htmx-request]:inline-block"></span>
+    {% if icon and icon_position != 'right' %}<i class="{{ icon }} group-[.htmx-request]:hidden"></i>{% endif %}
+    <span>{{ text }}</span>
+    {% if icon and icon_position == 'right' %}<i class="{{ icon }} group-[.htmx-request]:hidden"></i>{% endif %}
 </button>
 {% endif %}

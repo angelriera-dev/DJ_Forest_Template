@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # 3rd party
     "allauth",
     "allauth.account",
+    "widget_tweaks",
     # Locals
     "apps.users",
     "apps.dashboard",

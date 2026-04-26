@@ -1,0 +1,8 @@
+{% comment %}
+Usage: hx-trigger="notify: { 'text': 'Saved!', 'type': 'success' }"
+Or just include it in a fragment:
+{% include "components/toast_trigger.html" with text="Update successful" type="success" %}
+{% endcomment %}
+<div style="display:none"
+     x-init="$nextTick(() => { notify('{{ text }}', '{{ type|default:"info" }}') })">
+</div>

@@ -161,3 +161,6 @@ MIDDLEWARE = ['django_htmx.middleware.HTMXMiddleware']
 - **HTMX Docs**: https://htmx.org/docs/
 - **Alpine.js Docs**: https://alpinejs.dev/start
 - **DaisyUI**: https://daisyui.com/
+- **django-widget-tweaks**: https://github.com/jazzband/django-widget-tweaks
+- **Tailwind CSS**: https://tailwindcss.com/
+- **django-tailwind**: https://github.com/timonweb/django-tailwind

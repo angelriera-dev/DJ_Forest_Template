@@ -2,7 +2,7 @@
 <div class="navbar sticky top-0 z-50 border-b border-base-200 bg-base-100/95 backdrop-blur">
   <div class="navbar-start gap-2">
     <a href="{% if user.is_authenticated %}{% url 'dashboard:home' %}{% else %}{% url 'landing' %}{% endif %}"
-       class="btn btn-ghost px-2 text-lg normal-case">
+      class="btn btn-ghost px-2 text-lg normal-case">
       <span class="flex items-center gap-1.5 leading-none">
         <span class="font-bold">SaaS</span>
         <span class="text-primary font-semibold">Boiler</span>
@@ -13,40 +13,42 @@
   <div class="navbar-center hidden lg:flex">
     {% if user.is_authenticated %}
     <ul class="menu menu-horizontal px-1">
-      <li><a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
-      <li><a href="{% url 'dashboard:profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a></li>
-      <li><a href="{% url 'dashboard:settings' %}" class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a></li>
-      <li><a href="{% url 'dashboard:subscription_plans' %}" class="{% if request.resolver_match.url_name == 'subscription_plans' %}active{% endif %}">Plans</a></li>
+      <li><a href="{% url 'dashboard:home' %}"
+          class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+      <li><a href="{% url 'dashboard:profile' %}"
+          class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a></li>
+      <li><a href="{% url 'dashboard:settings' %}"
+          class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a></li>
+      <li><a href="{% url 'dashboard:subscription_plans' %}"
+          class="{% if request.resolver_match.url_name == 'subscription_plans' %}active{% endif %}">Plans</a></li>
     </ul>
     {% endif %}
   </div>
 
   <div class="navbar-end gap-2">
-    <button type="button"
-            class="btn btn-ghost btn-circle btn-sm"
-            title="Toggle theme"
-            aria-label="Toggle theme"
-            x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'dark' }"
-            @themechange.window="dark = $event.detail.theme === 'dark'"
-            @click="dark = !dark; window.appTheme.set(dark ? 'dark' : 'light')">
-      <i class="fa-solid fa-moon text-base-content/70" x-show="!dark"></i>
-      <i class="fa-solid fa-sun text-warning" x-show="dark" style="display:none"></i>
+    <button type="button" class="btn btn-ghost btn-circle btn-lg" title="Toggle theme" aria-label="Toggle theme"
+      @click="toggleTheme">
+      <i class="fa-solid fa-moon text-base-content/70" x-show="theme !== 'fortress-dark'"></i>
+      <i class="fa-solid fa-sun text-warning" x-show="theme === 'fortress-dark'"></i>
     </button>
 
     {% if user.is_authenticated %}
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder">
         {% if user.profile.avatar %}
-        <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name|default:user.email }}'s avatar" class="rounded-full">
+        <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name|default:user.email }}'s avatar"
+          class="rounded-full">
         {% else %}
-        {% include "components/ui/avatar.html" with size=sm content=user.get_full_name|default:user.email|first|upper %}
+        {% include "components/ui/avatar.html" with content=user.get_full_name|default:user.email|first|upper %}
         {% endif %}
       </div>
-      <ul tabindex="0" class="menu dropdown-content z-[1] mt-3 w-56 rounded-box bg-base-100 p-2 shadow border border-base-200">
+      <ul tabindex="0"
+        class="menu dropdown-content z-[1] mt-3 w-56 rounded-box bg-base-100 p-2 shadow border border-base-200">
         <li><a href="{% url 'dashboard:profile' %}"><i class="fa-solid fa-user w-4"></i>Profile</a></li>
         <li><a href="{% url 'dashboard:settings' %}"><i class="fa-solid fa-gear w-4"></i>Settings</a></li>
         <li><a href="{% url 'dashboard:subscription_plans' %}"><i class="fa-solid fa-credit-card w-4"></i>Plans</a></li>
-        <li><a href="{% url 'account_logout' %}" class="text-base-content/70 hover:text-error"><i class="fa-solid fa-right-from-bracket w-4 text-error/70"></i>Log out</a></li>
+        <li><a href="{% url 'account_logout' %}" class="text-base-content/70 hover:text-error"><i
+              class="fa-solid fa-right-from-bracket w-4 text-error/70"></i>Log out</a></li>
       </ul>
     </div>
     {% else %}

@@ -6,21 +6,36 @@ Usage:
 Variables:
   name, label, type, placeholder, value, required, disabled, no_margin, class, id
 {% endcomment %}
-<div class="form-control{% if no_margin %} w-full{% endif %}{% if class %} {{ class }}{% endif %}">
-  {% if label %}
-  <label class="label pb-1" for="{{ id|default:name }}">
-    <span class="label-text text-sm font-medium">{{ label }}</span>
+{% load widget_tweaks %}
+<div class="form-control w-full{% if class %} {{ class }}{% endif %}">
+  {% if label or field.label %}
+  <label class="label pb-1" 
+         {% if field %}for="{{ field.id_for_label }}"{% elif id %}for="{{ id }}"{% elif name %}for="{{ name }}"{% endif %}>
+    <span class="label-text text-sm font-medium">
+      {% if label %}{{ label }}{% else %}{{ field.label }}{% endif %}
+    </span>
+    {% if field.field.required or required %}<span class="label-text-alt text-error">*</span>{% endif %}
   </label>
   {% endif %}
-  <input type="{{ type|default:'text' }}" name="{{ name }}" id="{{ id|default:name }}"
-    {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
-    {% if value %}value="{{ value }}"{% endif %}
-    {% if required %}required{% endif %}
-    {% if disabled %}disabled{% endif %}
-    class="input input-bordered w-full{% if error %} input-error{% endif %}">
-  {% if error %}
-  <label class="label">
-    <span class="label-text-alt text-error">{{ error }}</span>
+
+  {% if field %}
+    {% render_field field class+="input input-bordered w-full" placeholder=placeholder %}
+  {% else %}
+    <input type="{{ type|default:'text' }}" 
+           {% if name %}name="{{ name }}"{% endif %} 
+           {% if id %}id="{{ id }}"{% elif name %}id="{{ name }}"{% endif %}
+      {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+      {% if value %}value="{{ value }}"{% endif %}
+      {% if required %}required{% endif %}
+      {% if disabled %}disabled{% endif %}
+      class="input input-bordered w-full{% if error %} input-error{% endif %}">
+  {% endif %}
+
+  {% if error or field.errors %}
+  <label class="label p-1">
+    <span class="label-text-alt text-error font-medium">
+      {% if error %}{{ error }}{% else %}{{ field.errors.0 }}{% endif %}
+    </span>
   </label>
   {% endif %}
 </div>
