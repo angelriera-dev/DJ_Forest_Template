@@ -119,14 +119,14 @@ Send multiple element updates in one response:
 ```python
 def add_item(request):
     # ... save item ...
-    
+
     # Build OOB response
     response = render(request, 'partials/new_item.html', {'item': item})
     response['HX-Trigger'] = json.dumps({
         'itemAdded': {'id': item.id},
         'updateCartCount': {'count': Cart.objects.count()}
     })
-    
+
     # OOB targets in response body
     return response
 ```

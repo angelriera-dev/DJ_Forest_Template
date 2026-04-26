@@ -10,20 +10,20 @@ from .base import *
 
 # Email: Backend real en producción (ejemplo SMTP)
 EMAIL_BACKEND = os.environ.get(
-    'DJANGO_EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend'
+    "DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
 )
 
 # Logging: Menos verboso en producción, centrado en errores
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
     },
 }

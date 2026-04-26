@@ -7,8 +7,7 @@ def _send_subscription_confirmation_email(user_email, plan_name):
     send_mail(
         subject=f"Subscription Confirmed - {plan_name}",
         message=(
-            f"Your subscription to the {plan_name} plan "
-            "has been confirmed. Thank you!"
+            f"Your subscription to the {plan_name} plan has been confirmed. Thank you!"
         ),
         from_email=settings.EMAIL_HOST_USER or None,
         recipient_list=[user_email],

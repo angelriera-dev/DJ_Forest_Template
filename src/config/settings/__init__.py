@@ -9,10 +9,10 @@ Default: dev
 import os
 
 # Environment detection
-ENV = os.environ.get('DJANGO_ENV', 'dev').lower()
+ENV = os.environ.get("DJANGO_ENV", "dev").lower()
 
 # Valid environments
-VALID_ENVIRONMENTS = {'dev', 'staging', 'prod', 'local'}
+VALID_ENVIRONMENTS = {"dev", "staging", "prod", "local"}
 
 if ENV not in VALID_ENVIRONMENTS:
     raise ValueError(
@@ -20,8 +20,8 @@ if ENV not in VALID_ENVIRONMENTS:
     )
 
 # Environment-specific settings module
-SETTINGS_MODULE = f'config.settings.{ENV}'
+SETTINGS_MODULE = f"config.settings.{ENV}"
 
 # Lazy settings import - actual settings are loaded by Django
 # This __init__ just provides environment detection utilities
-__all__ = ['ENV', 'SETTINGS_MODULE']
+__all__ = ["ENV", "SETTINGS_MODULE"]

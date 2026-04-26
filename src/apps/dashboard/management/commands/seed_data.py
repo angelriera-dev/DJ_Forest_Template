@@ -7,71 +7,71 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Seed the database with initial data (admin user + subscription plans)'
+    help = "Seed the database with initial data (admin user + subscription plans)"
 
     def handle(self, *args, **options):
         # Create admin user
         user, created = User.objects.get_or_create(
-            email='admin@example.com',
-            defaults={'is_staff': True, 'is_superuser': True, 'first_name': 'Admin'},
+            email="admin@example.com",
+            defaults={"is_staff": True, "is_superuser": True, "first_name": "Admin"},
         )
         if created:
-            user.set_password('admin123')
+            user.set_password("admin123")
             user.save()
             self.stdout.write(
-                self.style.SUCCESS( # type: ignore
-                    'Admin user created (admin@example.com / admin123)'
+                self.style.SUCCESS(  # type: ignore
+                    "Admin user created (admin@example.com / admin123)"
                 )
             )
         else:
-            self.stdout.write('Admin user already exists')
+            self.stdout.write("Admin user already exists")
 
         # Create subscription plans
         plans = [
             {
-                'name': 'Free',
-                'slug': 'free',
-                'description': 'Get started with the basics',
-                'price': 0,
-                'interval': 'monthly',
-                'features': ['Basic access', 'Community support', '1 project'],
+                "name": "Free",
+                "slug": "free",
+                "description": "Get started with the basics",
+                "price": 0,
+                "interval": "monthly",
+                "features": ["Basic access", "Community support", "1 project"],
             },
             {
-                'name': 'Pro',
-                'slug': 'pro',
-                'description': 'For growing teams and businesses',
-                'price': 9.99,
-                'interval': 'monthly',
-                'features': [
-                    'Everything in Free',
-                    'Priority support',
-                    'API access',
-                    '10 projects',
-                    'Analytics',
+                "name": "Pro",
+                "slug": "pro",
+                "description": "For growing teams and businesses",
+                "price": 9.99,
+                "interval": "monthly",
+                "features": [
+                    "Everything in Free",
+                    "Priority support",
+                    "API access",
+                    "10 projects",
+                    "Analytics",
                 ],
             },
             {
-                'name': 'Enterprise',
-                'slug': 'enterprise',
-                'description': 'For large-scale operations',
-                'price': 49.99,
-                'interval': 'monthly',
-                'features': [
-                    'Everything in Pro',
-                    'Dedicated support',
-                    'Custom integrations',
-                    'Unlimited projects',
-                    'SLA guarantee',
+                "name": "Enterprise",
+                "slug": "enterprise",
+                "description": "For large-scale operations",
+                "price": 49.99,
+                "interval": "monthly",
+                "features": [
+                    "Everything in Pro",
+                    "Dedicated support",
+                    "Custom integrations",
+                    "Unlimited projects",
+                    "SLA guarantee",
                 ],
             },
         ]
 
         for plan_data in plans:
             plan, created = SubscriptionPlan.objects.get_or_create(
-                slug=plan_data['slug'],
+                slug=plan_data["slug"],
                 defaults=plan_data,
             )
-            status = 'created' if created else 'already exists'
-            self.stdout.write(self.style.SUCCESS(f'Plan "{plan.name}" {status}')) # type: ignore
+            status = "created" if created else "already exists"
+            self.stdout.write(self.style.SUCCESS(f'Plan "{plan.name}" {status}'))  # type: ignore
 
-        self.stdout.write(self.style.SUCCESS('\nSeed data complete!')) # type: ignore
+        self.stdout.write(self.style.SUCCESS("\nSeed data complete!"))  # type: ignore

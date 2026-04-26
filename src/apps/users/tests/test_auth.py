@@ -23,14 +23,18 @@ class TestLoginEndpoint:
         When: The client sends POST to /api/auth/login/ with valid credentials
         Then: The response returns HTTP 200 with key and user data
         """
-        url = reverse('rest_login')
-        response = api_client.post(url, {
-            'email': user.email,
-            'password': 'testpass123',
-        }, format='json')
+        url = reverse("rest_login")
+        response = api_client.post(
+            url,
+            {
+                "email": user.email,
+                "password": "testpass123",
+            },
+            format="json",
+        )
 
         assert response.status_code == 200
-        assert 'key' in response.data
+        assert "key" in response.data
 
     def test_login_invalid_credentials(self, api_client, user):
         """
@@ -41,11 +45,15 @@ class TestLoginEndpoint:
         When: The client sends POST with wrong password
         Then: The response returns HTTP 400 with error detail
         """
-        url = reverse('rest_login')
-        response = api_client.post(url, {
-            'email': user.email,
-            'password': 'wrongpassword',
-        }, format='json')
+        url = reverse("rest_login")
+        response = api_client.post(
+            url,
+            {
+                "email": user.email,
+                "password": "wrongpassword",
+            },
+            format="json",
+        )
 
         assert response.status_code == 400
 
@@ -69,12 +77,16 @@ class TestRegistrationEndpoint:
         This test verifies the endpoint responds - full registration
         flow requires email backend configuration.
         """
-        url = reverse('rest_register')
-        response = api_client.post(url, {
-            'email': 'newuser@example.com',
-            'password1': 'securepass123',
-            'password2': 'securepass123',
-        }, format='json')
+        url = reverse("rest_register")
+        response = api_client.post(
+            url,
+            {
+                "email": "newuser@example.com",
+                "password1": "securepass123",
+                "password2": "securepass123",
+            },
+            format="json",
+        )
 
         # Accept 201 (success) or 400 (requires additional config)
         assert response.status_code in [201, 400]
@@ -88,12 +100,16 @@ class TestRegistrationEndpoint:
         When: The client submits the form
         Then: The response returns HTTP 400 with error about password mismatch
         """
-        url = reverse('rest_register')
-        response = api_client.post(url, {
-            'email': 'mismatch@example.com',
-            'password1': 'securepass123',
-            'password2': 'differentpass',
-        }, format='json')
+        url = reverse("rest_register")
+        response = api_client.post(
+            url,
+            {
+                "email": "mismatch@example.com",
+                "password1": "securepass123",
+                "password2": "differentpass",
+            },
+            format="json",
+        )
 
         assert response.status_code == 400
 
@@ -113,14 +129,18 @@ class TestLogoutEndpoint:
         Then: The response returns HTTP 200
         """
         # First login to get a session
-        login_url = reverse('rest_login')
-        api_client.post(login_url, {
-            'email': user.email,
-            'password': 'testpass123',
-        }, format='json')
+        login_url = reverse("rest_login")
+        api_client.post(
+            login_url,
+            {
+                "email": user.email,
+                "password": "testpass123",
+            },
+            format="json",
+        )
 
         # Then logout
-        logout_url = reverse('rest_logout')
+        logout_url = reverse("rest_logout")
         response = api_client.post(logout_url)
 
         assert response.status_code == 200
@@ -140,7 +160,7 @@ class TestUserEndpoint:
         When: The client sends GET to /api/auth/user/
         Then: The response returns HTTP 401 with error detail
         """
-        url = reverse('rest_user_details')
+        url = reverse("rest_user_details")
         response = api_client.get(url)
 
         assert response.status_code == 401
@@ -155,8 +175,8 @@ class TestUserEndpoint:
         Then: The response returns HTTP 200 with user data
         """
         api_client.force_authenticate(user=user)
-        url = reverse('rest_user_details')
+        url = reverse("rest_user_details")
         response = api_client.get(url)
 
         assert response.status_code == 200
-        assert response.data['email'] == user.email
+        assert response.data["email"] == user.email

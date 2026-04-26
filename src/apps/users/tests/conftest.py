@@ -18,11 +18,11 @@ def user(db):
     """
     user_model = get_user_model()
     user_instance = user_model(
-        email='testuser@example.com',
-        first_name='Test',
-        last_name='User',
+        email="testuser@example.com",
+        first_name="Test",
+        last_name="User",
     )
-    user_instance.set_password('testpass123')
+    user_instance.set_password("testpass123")
     user_instance.save()
     return user_instance
 
@@ -37,11 +37,11 @@ def superuser(db):
     """
     user_model = get_user_model()
     user_instance = user_model(
-        email='admin@example.com',
+        email="admin@example.com",
         is_staff=True,
         is_superuser=True,
     )
-    user_instance.set_password('adminpass123')
+    user_instance.set_password("adminpass123")
     user_instance.save()
     return user_instance
 
@@ -55,10 +55,10 @@ def user_data():
         dict: User data dictionary.
     """
     return {
-        'email': 'newuser@example.com',
-        'password': 'newpass123',
-        'first_name': 'New',
-        'last_name': 'User',
+        "email": "newuser@example.com",
+        "password": "newpass123",
+        "first_name": "New",
+        "last_name": "User",
     }
 
 
@@ -83,6 +83,7 @@ def api_client():
         APIClient: A DRF API test client.
     """
     from rest_framework.test import APIClient
+
     return APIClient()
 
 

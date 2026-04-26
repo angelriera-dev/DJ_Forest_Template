@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
 
@@ -8,10 +9,10 @@ def main():
     """Run administrative tasks."""
     # Set DJANGO_SETTINGS_MODULE dynamically based on DJANGO_ENV
     # Default to 'dev' if not specified
-    env = os.environ.get('DJANGO_ENV', 'dev').lower()
+    env = os.environ.get("DJANGO_ENV", "dev").lower()
 
     # Validate environment
-    valid_envs = {'dev', 'staging', 'prod', 'local'}
+    valid_envs = {"dev", "staging", "prod", "local"}
     if env not in valid_envs:
         print(
             f"Error: Invalid DJANGO_ENV '{env}'. "
@@ -20,7 +21,7 @@ def main():
         sys.exit(1)
 
     # Set the settings module
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'config.settings.{env}')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"config.settings.{env}")
 
     try:
         from django.core.management import execute_from_command_line
@@ -33,5 +34,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

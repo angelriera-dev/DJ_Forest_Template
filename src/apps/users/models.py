@@ -66,7 +66,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ()
 
-    class Meta: # type: ignore
+    class Meta:  # type: ignore
         db_table = "users_user"
         verbose_name = "User"
         verbose_name_plural = "Users"

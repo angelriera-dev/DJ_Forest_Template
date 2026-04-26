@@ -76,7 +76,7 @@ Local architecture skills cover folder-specific conventions and boundaries insid
 When instructions overlap, interpret project context in this order:
 
 1. Explicit user request in chat
-  
+
 2. Nearest `AGENTS.md`
 3. Relevant ADR in `docs/adr/`
 4. Activated `SKILL.md` instructions

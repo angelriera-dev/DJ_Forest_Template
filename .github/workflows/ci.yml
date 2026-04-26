@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install 3.14
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Ruff Linter
+        run: uv run ruff check src
+
+      - name: Ruff Formatter
+        run: uv run ruff format --check src
+
+      #- name: Static Type Checking (Pyright)
+      #  run: uv run pyright src
+
+      - name: Security Scan (Bandit)
+        run: uv run bandit -r src/apps/ src/config/
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    needs: quality
+    env:
+      DJANGO_ENV: dev
+      DJANGO_SECRET_KEY: "ci-insecure-key-for-tests-only"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install 3.14
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run Pytest
+        run: uv run pytest --cov=src/apps --cov-report=xml
+
+      - name: Upload coverage to Codecov (Optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml

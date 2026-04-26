@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: docker/dev.Dockerfile
     network_mode: host
     working_dir: /app
     volumes:

@@ -2,10 +2,23 @@
 Django base settings, modularized for security and scalability.
 """
 
+import os
 from pathlib import Path
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Initialize environment variables
+env = environ.Env(
+    DEBUG=(bool, False),
+)
+
+# Read .env file if it exists (searching in project root)
+dot_env_path = BASE_DIR.parent / ".env"
+if os.path.exists(dot_env_path):
+    environ.Env.read_env(dot_env_path)
 
 # --- CORE SETTINGS ---
 from .core.database import *

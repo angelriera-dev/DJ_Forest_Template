@@ -18,9 +18,9 @@ Each skill folder contains:
 ### Frontend Skills
 
 #### django-htmx
-**Path**: `SKILLS/django-htmx/SKILL.md`  
-**Version**: 1.0  
-**Author**: gentleman-programming  
+**Path**: `SKILLS/django-htmx/SKILL.md`
+**Version**: 1.0
+**Author**: gentleman-programming
 
 Django + HTMX + Alpine.js patterns for modern SaaS applications.
 
@@ -38,9 +38,9 @@ Django + HTMX + Alpine.js patterns for modern SaaS applications.
 ---
 
 #### htmx-patterns
-**Path**: `SKILLS/htmx-patterns/SKILL.md`  
-**Version**: 1.0  
-**Author**: gentleman-programming  
+**Path**: `SKILLS/htmx-patterns/SKILL.md`
+**Version**: 1.0
+**Author**: gentleman-programming
 
 HTMX advanced patterns: swap modifiers, events, OOB updates, indicators.
 
@@ -60,9 +60,9 @@ HTMX advanced patterns: swap modifiers, events, OOB updates, indicators.
 ### Authentication Skills
 
 #### django-allauth
-**Path**: `SKILLS/django-allauth/SKILL.md`  
-**Version**: 1.0  
-**Author**: gentleman-programming  
+**Path**: `SKILLS/django-allauth/SKILL.md`
+**Version**: 1.0
+**Author**: gentleman-programming
 
 Django allauth setup, configuration, and template patterns.
 
@@ -80,9 +80,9 @@ Django allauth setup, configuration, and template patterns.
 ### Documentation Skills
 
 #### local-architecture-docs
-**Path**: `SKILLS/local-architecture-docs/SKILL.md`  
-**Version**: 2.0  
-**Author**: rag  
+**Path**: `SKILLS/local-architecture-docs/SKILL.md`
+**Version**: 2.0
+**Author**: rag
 
 Local architecture guidance for the `docs/` folder.
 
@@ -95,9 +95,9 @@ Local architecture guidance for the `docs/` folder.
 - Creating feature walkthroughs or setup guides
 
 #### local-architecture-templates
-**Path**: `SKILLS/local-architecture-templates/SKILL.md`  
-**Version**: 2.2  
-**Author**: rag  
+**Path**: `SKILLS/local-architecture-templates/SKILL.md`
+**Version**: 2.2
+**Author**: rag
 
 Local architecture guidance for the `templates/` folder.
 

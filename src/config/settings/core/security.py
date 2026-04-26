@@ -1,6 +1,6 @@
 import os
 
-env = os.environ.get('DJANGO_ENV', 'dev').lower()
+env = os.environ.get("DJANGO_ENV", "dev").lower()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get(
@@ -8,13 +8,13 @@ SECRET_KEY = os.environ.get(
 )
 
 # DEBUG se adapta al entorno
-DEBUG = env != 'prod'
+DEBUG = env != "prod"
 
 # Hosts permitidos
-if env == 'prod':
+if env == "prod":
     _allowed_hosts = os.environ.get("ALLOWED_HOSTS", "").split(",")
 else:
-    _allowed_hosts = ['*']
+    _allowed_hosts = ["*"]
 ALLOWED_HOSTS = _allowed_hosts
 
 # CSRF Trusted Origins
@@ -24,11 +24,11 @@ if csrf_origins:
         origin.strip() for origin in csrf_origins.split(",") if origin.strip()
     ]
 else:
-    _csrf_origins = ['http://localhost:8000', 'http://127.0.0.1:8000']
+    _csrf_origins = ["http://localhost:8000", "http://127.0.0.1:8000"]
 CSRF_TRUSTED_ORIGINS = _csrf_origins
 
 # OWASP & Hardening Settings (Phase 1)
-if env == 'prod':
+if env == "prod":
     _hsts_seconds = 31536000
     _ssl_redirect = True
     _cookie_secure = True
@@ -48,4 +48,4 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = "DENY"
