@@ -65,6 +65,7 @@ my_sass/
 |-------|---------|----------|
 | **local-architecture-docs** | Editing `docs/`, ADRs, governance, documentation indexes | `SKILLS/local-architecture-docs/SKILL.md` |
 | **local-architecture-templates** | Modifying `templates/`, components, and template conventions | `SKILLS/local-architecture-templates/SKILL.md` |
+| **saas-workflow** | Managing template upstream, syncing, or SaaS project initialization | `SKILLS/saas-workflow/SKILL.md` |
 | **django-htmx** (global) | HTMX, Alpine.js, Tailwind patterns | Loaded on-demand |
 | **django-allauth** (global) | Authentication, OAuth, MFA | Loaded on-demand |
 

@@ -23,6 +23,7 @@ This registry catalogs the skills and conventions active in this project.
 |-------|---------|----------|
 | **local-architecture-docs** | Editing `docs/`, ADRs, governance | `SKILLS/local-architecture-docs/` |
 | **local-architecture-templates** | Modifying `templates/`, components | `SKILLS/local-architecture-templates/` |
+| **saas-workflow** | Managing template upstream, syncing, or project initialization | `SKILLS/saas-workflow/` |
 | **django-htmx** | HTMX, Alpine.js patterns | `SKILLS/django-htmx/` |
 | **django-allauth** | Authentication, OAuth, MFA | `SKILLS/django-allauth/` |
 | **htmx-patterns** | HTMX interaction patterns | `SKILLS/htmx-patterns/` |

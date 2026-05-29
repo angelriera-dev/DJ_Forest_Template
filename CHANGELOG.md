@@ -112,4 +112,17 @@ Format: `YYYY-MM-DD — Summary — Files Affected`
 
 ---
 
+## 2026-05-29 — Implement SaaS Upstream Synchronization Workflow
+
+**Summary**: Added workflow scripts and documentation for deriving SaaS projects from this template. Introduced two operational modes: Extensible (authoritative) and Collaborative (strict protected). Added Makefile targets (`saas-init`, `saas-collab`, `saas-sync`) and documented the Git pre-commit hook strategy to prevent accidental local modification of core template files. Created the `saas-workflow` skill to govern agent behavior in downstream projects.
+
+**Files Affected**:
+- `Makefile` — Added `saas-init`, `saas-collab`, and `saas-sync` targets
+- `README.md` — Updated "Getting Started" with Extensible and Collaborative workflows
+- `SKILLS/saas-workflow/SKILL.md` — Created local skill to document the two workflow rules
+- `.atl/skill-registry.md` — Indexed the new `saas-workflow` skill
+- `AGENTS.md` — Indexed the new `saas-workflow` skill
+
+---
+
 ## Future Changes

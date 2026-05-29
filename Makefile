@@ -89,3 +89,23 @@ rm-containers:
 
 temp: # nunca borrar
 	@docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
+
+# --- SaaS Workflow ---
+TEMPLATE_URL := https://github.com/angelriera-dev/Sass_Forest_Bolier.git
+
+saas-init:
+	@echo "Configuring upstream template for Extensible mode..."
+	git remote add template $(TEMPLATE_URL) || echo "Remote 'template' already exists."
+	@echo "Done. Use 'make saas-sync' to pull updates."
+
+saas-collab: saas-init
+	@echo "Installing pre-commit hook for Collaborative mode..."
+	@echo '#!/bin/sh\n\nif git diff --cached --name-only | grep -E "^(src/config/|src/templates/components/|SKILLS/)"; then\n  echo "\\n[BLOCK] ERROR: You are modifying protected template files! Commit rejected.\\n"\n  exit 1\nfi\n\nif git diff --cached --name-only | grep -E "^src/apps/users/"; then\n  echo "\\n[WARN] WARNING: You are modifying apps/users. Ensure this is intentional.\\n"\nfi\n' > .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@echo "Pre-commit hook installed. Protected folders are now blocked."
+
+saas-sync:
+	@echo "Fetching updates from template..."
+	git fetch template
+	@echo "Merging updates..."
+	git merge template/main --allow-unrelated-histories
