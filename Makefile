@@ -1,49 +1,47 @@
 
 # Configuración de UV
-UV := $(shell which uv 2>/dev/null)
-VENV := .venv
-PYTHON := $(VENV)/bin/python
+UV_CMD := $(shell which uv 2>/dev/null)
+ifeq ($(UV_CMD),)
+    @echo "UV not found. Please install it: pip install uv"
+endif
+
+
 SRC_DIR := src
 
-# Si UV no está instalado, intentamos usarlo vía pip (fallback)
-ifeq ($(UV),)
-    UV_CMD := $(PYTHON) -m uv
-else
-    UV_CMD := uv
-endif
+
+
+# ===================================================================
+# =========================== ENVIRONMENT ===========================
+# ===================================================================
 
 init:
 	uv sync
 
-env:
-	@echo "Initializing environment with uv..."
-	@if [ -z "$(UV)" ] && [ ! -f $(PYTHON) ]; then \
-		python3 -m venv $(VENV) && \
-		$(VENV)/bin/pip install uv; \
-	fi
-	$(UV_CMD) sync
-	@if [ ! -f .env ]; then \
-		cp .env.example .env; \
-		echo "Created .env from .env.example"; \
-	fi
-
-run: dev
-
 dev:
-	$(UV_CMD) run src/manage.py runserver
+	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev
+
+staging:
+	$(UV_CMD) run src/manage.py runserver --settings=config.settings.staging
+
+prod:
+	$(UV_CMD) run src/manage.py runserver --settings=config.settings.prod
+
+
 
 migrate:
 	$(UV_CMD) run src/manage.py migrate
 
-# TEST QUALITY
+
+
+# ===================================================================
+# ========================= QUALITY TEST ============================
+# ===================================================================
 
 check:
 	$(UV_CMD) run src/manage.py check
 
 pytest:
 	$(UV_CMD) run pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
-
-test: pytest
 
 lint:
 	$(UV_CMD) run ruff check $(SRC_DIR)
@@ -61,9 +59,14 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage uv.lock
 
-check_code: check lint check_types security_scan pytest
+run_tests: check lint check_types security_scan pytest
 
-# Docker
+
+
+# ===============================================================
+# ========================== DOCKER =============================
+# ===============================================================
+
 APP_NAME := app
 
 dev_container:
@@ -87,10 +90,15 @@ rm-containers:
 	if [ -n "$$ids" ]; then docker stop $$ids && docker rm $$ids; else echo "no containers"; fi
 
 
-temp: # nunca borrar
+temp:
 	@docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
 
-# --- SaaS Workflow ---
+
+
+# ===================================================================
+# ===================== TEMPLATE REPOSITORY WORKFLOW =================
+# ===================================================================
+
 TEMPLATE_URL := https://github.com/angelriera-dev/Sass_Forest_Bolier.git
 
 saas-init:
@@ -98,13 +106,9 @@ saas-init:
 	git remote add template $(TEMPLATE_URL) || echo "Remote 'template' already exists."
 	@echo "Done. Use 'make saas-sync' to pull updates."
 
-saas-collab: saas-init
-	@echo "Installing pre-commit hook for Collaborative mode..."
-	@echo '#!/bin/sh\n\nif git diff --cached --name-only | grep -E "^(src/config/|src/templates/components/|SKILLS/)"; then\n  echo "\\n[BLOCK] ERROR: You are modifying protected template files! Commit rejected.\\n"\n  exit 1\nfi\n\nif git diff --cached --name-only | grep -E "^src/apps/users/"; then\n  echo "\\n[WARN] WARNING: You are modifying apps/users. Ensure this is intentional.\\n"\nfi\n' > .git/hooks/pre-commit
-	@chmod +x .git/hooks/pre-commit
-	@echo "Pre-commit hook installed. Protected folders are now blocked."
-
 saas-sync:
+	@echo "create a new branch"
+	@git checkout -b update-template
 	@echo "Fetching updates from template..."
 	git fetch template
 	@echo "Merging updates..."
