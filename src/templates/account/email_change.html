@@ -14,7 +14,7 @@
           </p>
         </div>
 
-        <form class="space-y-5" method="POST" action="{% url 'account_email' %}">
+        <form class="space-y-5" method="post" action="{% url 'account_email' %}">
       {% csrf_token %}
 
           {% include "components/ui/input.html" with id="id_email" name="email" type="email" label="New email address" placeholder="New email address" required=True %}

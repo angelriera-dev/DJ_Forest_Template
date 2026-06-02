@@ -12,7 +12,7 @@ Variables: actions (list of dicts with: href, icon, text, method)
     <div class="p-2">
       {% for action in actions %}
       {% if action.method == 'POST' %}
-      <form action="{{ action.href }}" method="POST">{% csrf_token %}
+      <form action="{{ action.href }}" method="post">{% csrf_token %}
         <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left hover:bg-base-200 transition-colors">
           <i class="{{ action.icon }} w-5 text-center text-base-content/60 leading-none"></i>
           <span class="text-sm">{{ action.text }}</span>

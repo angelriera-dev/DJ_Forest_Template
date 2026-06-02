@@ -1,6 +1,11 @@
+# pyright: reportIncompatibleVariableOverride=false, reportMissingTypeArgument=false
+from __future__ import annotations
+
 import uuid
+from typing import Any, ClassVar
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.password_validation import validate_password
 from django.db import models
 
 
@@ -9,20 +14,27 @@ class UserManager(BaseUserManager):
 
     use_in_migrations = True
 
-    def create_user(self, email: str, password=None, **extra_fields):
+    def create_user(
+        self, email: str, password: str | None = None, **extra_fields: Any
+    ) -> User:
         """Create and save a regular user."""
         if not email:
             raise ValueError("The Email address must be set.")
 
-        normalized_email: str = self.normalize_email(email)
-        username = extra_fields.pop("username", "")
+        normalized_email = self.normalize_email(email)
+        username = str(extra_fields.pop("username", ""))
 
-        user = self.model(email=normalized_email, username=username, **extra_fields)
+        model: Any = self.model  # type: ignore[reportUnknownMemberType]
+        user = model(email=normalized_email, username=username, **extra_fields)
+        if password is not None:
+            validate_password(password, user=user)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(
+        self, email: str, password: str | None = None, **extra_fields: Any
+    ) -> User:
         """Create and save a superuser."""
         extra_fields.setdefault("username", "")
         extra_fields.setdefault("is_staff", True)
@@ -50,31 +62,33 @@ class User(AbstractUser):
     - groups, user_permissions
     """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # type: ignore
+    id: models.UUIDField[Any, Any] = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False
+    )
 
     # Use email as the unique identifier for authentication
-    username = models.CharField(
+    username: models.CharField[str, str] = models.CharField(
         max_length=150,
         blank=True,
         default="",
         help_text="Optional. 150 characters or fewer.",
     )
-    email = models.EmailField(
+    email: models.EmailField[str, str] = models.EmailField(
         unique=True,
         verbose_name="Email address",
         help_text="Required. A valid email address.",
     )
 
-    objects = UserManager()  # type: ignore
+    objects: UserManager = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ()
+    REQUIRED_FIELDS: ClassVar[tuple[str, ...]] = ()
 
-    class Meta:  # type: ignore
+    class Meta:
         db_table = "users_user"
         verbose_name = "User"
         verbose_name_plural = "Users"
         ordering = ("-date_joined",)
 
-    def __str__(self):
-        return self.email
+    def __str__(self) -> str:
+        return str(self.email)

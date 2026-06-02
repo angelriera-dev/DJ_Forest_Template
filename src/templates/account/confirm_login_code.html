@@ -12,7 +12,7 @@
           <p class="mt-2 text-sm text-base-content/60">We've sent a login code to your email. Please enter it below.</p>
         </div>
 
-        <form class="space-y-5" method="POST">
+        <form class="space-y-5" method="post">
           {% csrf_token %}
 
           {% include "components/ui/input.html" with id="id_code" name="code" type="text" label="Login code" placeholder="Enter code" required=True %}

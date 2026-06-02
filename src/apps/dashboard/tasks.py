@@ -1,8 +1,11 @@
+from collections.abc import Callable
+from typing import Any
+
 from django.conf import settings
 from django.core.mail import send_mail
 
 
-def _send_subscription_confirmation_email(user_email, plan_name):
+def _send_subscription_confirmation_email(user_email: str, plan_name: str) -> None:
     """Send confirmation email when a user subscribes to a plan."""
     send_mail(
         subject=f"Subscription Confirmed - {plan_name}",
@@ -14,7 +17,7 @@ def _send_subscription_confirmation_email(user_email, plan_name):
     )
 
 
-def _send_subscription_cancellation_email(user_email):
+def _send_subscription_cancellation_email(user_email: str) -> None:
     """Send notification email when a user cancels their subscription."""
     send_mail(
         subject="Subscription Cancelled",
@@ -24,7 +27,7 @@ def _send_subscription_cancellation_email(user_email):
     )
 
 
-def _send_trial_started_email(user_email):
+def _send_trial_started_email(user_email: str) -> None:
     """Send welcome email when a user starts a trial."""
     send_mail(
         subject="Welcome to Your Free Trial!",
@@ -35,10 +38,10 @@ def _send_trial_started_email(user_email):
 
 
 class _TaskShim:
-    def __init__(self, fn):
+    def __init__(self, fn: Callable[..., Any]) -> None:
         self._fn = fn
 
-    def enqueue(self, *args, **kwargs):
+    def enqueue(self, *args: Any, **kwargs: Any) -> Any:
         return self._fn(*args, **kwargs)
 
 

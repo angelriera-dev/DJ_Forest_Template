@@ -23,7 +23,7 @@
 
         <div class="text-center text-sm text-base-content/60">
           <p>Didn't receive the email?</p>
-          <form method="POST" action="{% url 'account_email' %}" class="mt-3">
+          <form method="post" action="{% url 'account_email' %}" class="mt-3">
             {% csrf_token %}
             <button type="submit" name="action_send" class="link link-primary font-medium">Resend verification email</button>
           </form>

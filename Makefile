@@ -31,9 +31,7 @@ prod:
 clear_migrations:
 	@echo "warning - are you sure you want to remove all migrations? [y/n]"
 	read -r answer
-	if [ "$$answer" = "y" ]; then \
-		rm -rf **/migrations/*; \
-	fi
+	if [ "$$answer" = "y" ]; then rm -rf **/migrations/*; fi
 
 makemigrations:
 	$(UV_CMD) run src/manage.py makemigrations

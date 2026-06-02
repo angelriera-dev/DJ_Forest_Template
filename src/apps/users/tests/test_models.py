@@ -85,7 +85,7 @@ class TestUserModel:
     def test_user_ordering(self):
         """Test that users are ordered by date_joined descending."""
         user_model = get_user_model()
-        password = "pass123"  # noqa: S105
+        password = "pass12345"  # noqa: S105
 
         # Create users in different order
         user_model.objects.create_user(

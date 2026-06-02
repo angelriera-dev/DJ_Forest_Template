@@ -1,3 +1,4 @@
+# pyright: reportConstantRedefinition=false
 """
 Development environment settings.
 """

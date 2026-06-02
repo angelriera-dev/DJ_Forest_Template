@@ -24,7 +24,7 @@
     </div>
   </div>
 
-  <form action="{% url 'dashboard:profile' %}" method="POST" class="card bg-base-100 border border-base-200 shadow-sm">
+  <form action="{% url 'dashboard:profile' %}" method="post" class="card bg-base-100 border border-base-200 shadow-sm">
     {% csrf_token %}
     <div class="card-body p-0">
       <div class="px-6 py-4 border-b border-base-200">

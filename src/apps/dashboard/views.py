@@ -1,8 +1,11 @@
 import hashlib
 import secrets
+from datetime import timedelta
+from typing import Any, cast
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -18,10 +21,10 @@ from .tasks import (
 
 @login_required
 @require_http_methods(["GET"])
-def dashboard_home(request):
-    user = request.user
+def dashboard_home(request: HttpRequest) -> HttpResponse:
+    user = cast(Any, request.user)
     joined = user.date_joined.strftime("%b %d, %Y")
-    activities = [
+    activities: list[dict[str, str]] = [
         {
             "icon": "fa-solid fa-user-plus",
             "text": "Account created",
@@ -33,7 +36,7 @@ def dashboard_home(request):
             "time": joined,
         },
     ]
-    quick_actions = [
+    quick_actions: list[dict[str, str]] = [
         {
             "href": reverse("dashboard:profile"),
             "icon": "fa-solid fa-user-pen",
@@ -59,10 +62,10 @@ def dashboard_home(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def profile(request):
+def profile(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         # Handle profile update
-        user = request.user
+        user = cast(Any, request.user)
         user.first_name = request.POST.get("first_name", "")
         user.last_name = request.POST.get("last_name", "")
         user.save()
@@ -73,8 +76,9 @@ def profile(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def settings(request):
-    user_settings, _ = UserSettings.objects.get_or_create(user=request.user)
+def settings(request: HttpRequest) -> HttpResponse:
+    user = cast(Any, request.user)
+    user_settings, _ = UserSettings.objects.get_or_create(user=user)
 
     if request.method == "POST":
         user_settings.notify_comments = request.POST.get("comments") == "on"
@@ -86,9 +90,9 @@ def settings(request):
         return redirect("dashboard:settings")
 
     # Check if a new API key was just generated (stored in session)
-    new_api_key = request.session.pop("new_api_key", None)
+    new_api_key = cast(str | None, request.session.pop("new_api_key", None))
 
-    context = {
+    context: dict[str, Any] = {
         "notification_settings": {
             "comments": user_settings.notify_comments,
             "updates": user_settings.notify_updates,
@@ -120,8 +124,9 @@ def settings(request):
 
 @login_required
 @require_http_methods(["POST"])
-def generate_api_key(request):
-    user_settings, _ = UserSettings.objects.get_or_create(user=request.user)
+def generate_api_key(request: HttpRequest) -> HttpResponse:
+    user = cast(Any, request.user)
+    user_settings, _ = UserSettings.objects.get_or_create(user=user)
 
     api_key = secrets.token_urlsafe(32)
     user_settings.api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()
@@ -141,11 +146,12 @@ def generate_api_key(request):
 
 @login_required
 @require_http_methods(["GET"])
-def subscription_plans(request):
+def subscription_plans(request: HttpRequest) -> HttpResponse:
     plans = SubscriptionPlan.objects.filter(is_active=True)
-    user_settings, _ = UserSettings.objects.get_or_create(user=request.user)
+    user = cast(Any, request.user)
+    user_settings, _ = UserSettings.objects.get_or_create(user=user)
 
-    context = {
+    context: dict[str, Any] = {
         "plans": plans,
         "current_plan": user_settings.subscription_plan,
         "subscription_status": user_settings.subscription_status,
@@ -157,9 +163,10 @@ def subscription_plans(request):
 
 @login_required
 @require_http_methods(["POST"])
-def subscribe_to_plan(request, plan_slug):
+def subscribe_to_plan(request: HttpRequest, plan_slug: str) -> HttpResponse:
     plan = get_object_or_404(SubscriptionPlan, slug=plan_slug, is_active=True)
-    user_settings = UserSettings.objects.get(user=request.user)
+    user = cast(Any, request.user)
+    user_settings = UserSettings.objects.get(user=user)
 
     # Check if user already has an active subscription
     if user_settings.is_subscription_active:
@@ -174,14 +181,14 @@ def subscribe_to_plan(request, plan_slug):
     # Set subscription end date based on interval
     now = timezone.now()
     if plan.interval == "monthly":
-        user_settings.subscription_end_date = now + timezone.timedelta(days=30)
+        user_settings.subscription_end_date = now + timedelta(days=30)
     else:  # yearly
-        user_settings.subscription_end_date = now + timezone.timedelta(days=365)
+        user_settings.subscription_end_date = now + timedelta(days=365)
 
     user_settings.save()
 
     send_subscription_confirmation_email.enqueue(
-        user_email=request.user.email,
+        user_email=user.email,
         plan_name=plan.name,
     )
 
@@ -191,8 +198,9 @@ def subscribe_to_plan(request, plan_slug):
 
 @login_required
 @require_http_methods(["POST"])
-def cancel_subscription(request):
-    user_settings = UserSettings.objects.get(user=request.user)
+def cancel_subscription(request: HttpRequest) -> HttpResponse:
+    user = cast(Any, request.user)
+    user_settings = UserSettings.objects.get(user=user)
 
     if not user_settings.is_subscription_active:
         messages.warning(request, "You do not have an active subscription to cancel.")
@@ -201,7 +209,7 @@ def cancel_subscription(request):
     user_settings.subscription_status = "cancelled"
     user_settings.save()
 
-    send_subscription_cancellation_email.enqueue(user_email=request.user.email)
+    send_subscription_cancellation_email.enqueue(user_email=user.email)
 
     messages.success(request, "Your subscription has been cancelled.")
     return redirect("dashboard:settings")
@@ -209,8 +217,9 @@ def cancel_subscription(request):
 
 @login_required
 @require_http_methods(["POST"])
-def start_trial(request):
-    user_settings = UserSettings.objects.get(user=request.user)
+def start_trial(request: HttpRequest) -> HttpResponse:
+    user = cast(Any, request.user)
+    user_settings = UserSettings.objects.get(user=user)
 
     if user_settings.is_subscription_active or user_settings.is_trial_active:
         messages.warning(request, "You already have an active subscription or trial.")
@@ -218,10 +227,10 @@ def start_trial(request):
 
     # Start trial period (14 days)
     user_settings.subscription_status = "trial"
-    user_settings.trial_end_date = timezone.now() + timezone.timedelta(days=14)
+    user_settings.trial_end_date = timezone.now() + timedelta(days=14)
     user_settings.save()
 
-    send_trial_started_email.enqueue(user_email=request.user.email)
+    send_trial_started_email.enqueue(user_email=user.email)
 
     messages.success(request, "Trial period started successfully.")
     return redirect("dashboard:settings")

@@ -23,7 +23,7 @@
               <i class="fa-brands fa-{{ account.provider }} text-xl text-base-content/70 w-8"></i>
               <span class="text-sm font-medium">{{ account.provider|title }}</span>
             </div>
-            <form method="POST">
+            <form method="post">
               {% csrf_token %}
               <input type="hidden" name="account" value="{{ account.id }}">
               <button type="submit" name="action_remove" class="btn btn-sm border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-100 dark:hover:bg-red-950/50">

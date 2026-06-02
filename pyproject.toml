@@ -68,8 +68,10 @@ include = ["src"]
 exclude = ["**/migrations", "**/tests"]
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
-pythonVersion = ">=3.12"
+pythonVersion = "3.13"
 pythonPlatform = "Linux"
+venvPath = "."
+venv = ".venv"
 
 [tool.uv]
 managed = true

@@ -42,7 +42,7 @@
           {% endfor %}
         </div>
 
-        <form id="email-manage-form" method="POST" action="{% url 'account_email' %}" class="flex flex-wrap gap-3 border-t border-base-200 px-6 py-4">
+        <form id="email-manage-form" method="post" action="{% url 'account_email' %}" class="flex flex-wrap gap-3 border-t border-base-200 px-6 py-4">
           {% csrf_token %}
           <button type="submit" name="action_primary" class="btn btn-outline btn-sm">Make primary</button>
           <button type="submit" name="action_send" class="btn btn-outline btn-sm">Re-send verification</button>
@@ -58,7 +58,7 @@
           <h3 class="text-sm font-medium">Add email address</h3>
         </div>
         <div class="p-6">
-          <form method="POST" action="{% url 'account_email' %}" class="space-y-5">
+          <form method="post" action="{% url 'account_email' %}" class="space-y-5">
             {% csrf_token %}
             {% include "components/ui/input.html" with id="id_email" name="email" type="email" label="Email" placeholder="New email address" required=True no_margin=True %}
             <button type="submit" name="action_add" class="btn btn-primary btn-block">Add email</button>

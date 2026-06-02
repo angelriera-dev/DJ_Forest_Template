@@ -12,7 +12,7 @@
           <p class="mt-2 text-sm text-base-content/60">Please re-enter your password to confirm your identity.</p>
         </div>
 
-        <form class="space-y-5" method="POST">
+        <form class="space-y-5" method="post">
           {% csrf_token %}
 
           {% include "components/ui/input.html" with id="id_password" name="password" type="password" label="Password" placeholder="Your password" required=True no_margin=True %}

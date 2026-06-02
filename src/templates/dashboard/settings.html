@@ -7,7 +7,7 @@
 {% block dashboard_content %}
 <div class="space-y-6">
 
-    <form action="{% url 'dashboard:settings' %}" method="POST" class="card bg-base-100 border border-base-200 shadow-sm">
+    <form action="{% url 'dashboard:settings' %}" method="post" class="card bg-base-100 border border-base-200 shadow-sm">
         {% csrf_token %}
         <div class="card-body p-0">
             <div class="px-6 py-4 border-b border-base-200">
@@ -154,7 +154,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <form action="{% url 'dashboard:generate_api_key' %}" method="POST">
+                        <form action="{% url 'dashboard:generate_api_key' %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline btn-sm">
                                 {% if api.has_key %}Regenerate{% else %}Generate key{% endif %}

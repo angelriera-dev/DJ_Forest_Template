@@ -33,12 +33,12 @@
                 </div>
                 <div>
                     {% if is_subscription_active %}
-                    <form method="POST" action="{% url 'dashboard:cancel_subscription' %}">
+                    <form method="post" action="{% url 'dashboard:cancel_subscription' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline btn-sm">Cancel plan</button>
                     </form>
                     {% elif not is_trial_active %}
-                    <form method="POST" action="{% url 'dashboard:start_trial' %}">
+                    <form method="post" action="{% url 'dashboard:start_trial' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary btn-sm">Start 14-day trial</button>
                     </form>
@@ -102,7 +102,7 @@
                         {% if current_plan == plan %}
                             <div class="text-center text-sm text-base-content/50">Current plan</div>
                         {% else %}
-                            <form method="POST" action="{% url 'dashboard:subscribe_to_plan' plan.slug %}">
+                            <form method="post" action="{% url 'dashboard:subscribe_to_plan' plan.slug %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-primary btn-block">
                                     {% if plan.price == 0 %}Downgrade to Free{% else %}Upgrade to {{ plan.name }}{% endif %}

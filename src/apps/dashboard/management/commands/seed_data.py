@@ -1,26 +1,40 @@
-from django.contrib.auth import get_user_model
+import os
+from typing import Any, cast
+
+from django.contrib.auth.password_validation import validate_password
 from django.core.management.base import BaseCommand
+from django.utils.crypto import get_random_string
 
 from apps.dashboard.models import SubscriptionPlan
-
-User = get_user_model()
+from apps.users.models import User
 
 
 class Command(BaseCommand):
     help = "Seed the database with initial data (admin user + subscription plans)"
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         # Create admin user
-        user, created = User.objects.get_or_create(
-            email="admin@example.com",
-            defaults={"is_staff": True, "is_superuser": True, "first_name": "Admin"},
+        user, created = cast(
+            tuple[User, bool],
+            User.objects.get_or_create(
+                email="admin@example.com",
+                defaults={
+                    "is_staff": True,
+                    "is_superuser": True,
+                    "first_name": "Admin",
+                },
+            ),
         )
         if created:
-            user.set_password("admin123")
+            password = os.environ.get(
+                "DJANGO_SEED_ADMIN_PASSWORD"
+            ) or get_random_string(16)
+            validate_password(password, user=user)
+            user.set_password(password)
             user.save()
             self.stdout.write(
                 self.style.SUCCESS(  # type: ignore
-                    "Admin user created (admin@example.com / admin123)"
+                    f"Admin user created (admin@example.com / {password})"
                 )
             )
         else:

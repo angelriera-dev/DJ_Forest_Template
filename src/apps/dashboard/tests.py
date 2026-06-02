@@ -1,12 +1,10 @@
 import hashlib
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
 from apps.dashboard.models import SubscriptionPlan, UserSettings
-
-User = get_user_model()
+from apps.users.models import User
 
 
 class DashboardAccessTests(TestCase):

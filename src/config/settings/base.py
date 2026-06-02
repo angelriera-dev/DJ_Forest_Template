@@ -1,3 +1,4 @@
+# pyright: reportConstantRedefinition=false, reportUnknownMemberType=false
 """
 Django base settings, modularized for security and scalability.
 """
