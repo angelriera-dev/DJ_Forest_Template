@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -48,6 +50,8 @@ class User(AbstractUser):
     - groups, user_permissions
     """
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # type: ignore
+
     # Use email as the unique identifier for authentication
     username = models.CharField(
         max_length=150,
@@ -61,7 +65,7 @@ class User(AbstractUser):
         help_text="Required. A valid email address.",
     )
 
-    objects = UserManager()
+    objects = UserManager()  # type: ignore
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ()

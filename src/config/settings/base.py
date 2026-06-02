@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     # Locals
     "apps.users",
+    "apps.common",
     "apps.dashboard",
 ]
 

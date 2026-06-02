@@ -2,8 +2,10 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from apps.common.models import BaseModel
 
-class SubscriptionPlan(models.Model):
+
+class SubscriptionPlan(BaseModel):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -17,11 +19,6 @@ class SubscriptionPlan(models.Model):
         default="monthly",
     )
     features = models.JSONField(default=list)
-    is_active = models.BooleanField(default=True)  # type: ignore
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    objects = models.Manager()
 
     class Meta:
         verbose_name = "Subscription Plan"
@@ -33,19 +30,15 @@ class SubscriptionPlan(models.Model):
         return f"{self.name} ({interval})"
 
 
-class UserSettings(models.Model):
+class UserSettings(BaseModel):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="settings"
     )
+
     # Notification preferences
     notify_comments = models.BooleanField(default=False)  # type: ignore
     notify_updates = models.BooleanField(default=False)  # type: ignore
     notify_marketing = models.BooleanField(default=False)  # type: ignore
-
-    # API settings
-    api_key_hash = models.CharField(max_length=64, blank=True, default="")
-    api_key_prefix = models.CharField(max_length=12, blank=True, default="")
-    api_key_created_at = models.DateTimeField(null=True, blank=True)
 
     # Subscription settings
     subscription_plan = models.ForeignKey(
@@ -68,11 +61,6 @@ class UserSettings(models.Model):
     subscription_start_date = models.DateTimeField(null=True, blank=True)
     subscription_end_date = models.DateTimeField(null=True, blank=True)
     trial_end_date = models.DateTimeField(null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    objects = models.Manager()
 
     class Meta:
         verbose_name = "User Settings"

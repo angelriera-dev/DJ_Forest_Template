@@ -28,6 +28,17 @@ prod:
 
 
 
+clear_migrations:
+	@echo "warning - are you sure you want to remove all migrations? [y/n]"
+	read -r answer
+	if [ "$$answer" = "y" ]; then \
+		rm -rf **/migrations/*; \
+	fi
+
+makemigrations:
+	$(UV_CMD) run src/manage.py makemigrations
+
+
 migrate:
 	$(UV_CMD) run src/manage.py migrate
 
@@ -59,7 +70,7 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage uv.lock
 
-run_tests: check lint check_types security_scan pytest
+run_tests: clean check lint check_types security_scan pytest
 
 
 
