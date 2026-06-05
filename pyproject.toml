@@ -33,6 +33,7 @@ dev = [
     "iniconfig>=2.3.0",
     "pluggy>=1.6.0",
     "django-stubs>=6.0.5",
+    "autotyping>=24.9.0",
 ]
 
 [tool.ruff]

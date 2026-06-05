@@ -58,6 +58,9 @@ lint:
 check_types:
 	$(UV_CMD) run pyright $(SRC_DIR)
 
+autotype:
+	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
+
 security_scan:
 	@echo "Running Bandit (Security Linter)..."
 	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit

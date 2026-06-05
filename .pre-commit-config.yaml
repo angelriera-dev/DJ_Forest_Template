@@ -11,6 +11,16 @@ repos:
     # -   id: check-json
     # -   id: check-yaml
 
+-   repo: https://github.com/JelleZijlstra/autotyping
+    rev: 24.9.0
+    hooks:
+    -   id: autotyping
+        args:
+        - --none-return
+        - --scalar-return
+        - --bool-param
+        - --guess-common-names
+
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: v0.9.1
