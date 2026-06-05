@@ -14,7 +14,7 @@ from django.urls import reverse
 class TestLoginEndpoint:
     """Test suite for login endpoint."""
 
-    def test_login_success(self, api_client, user):
+    def test_login_success(self, api_client, user) -> None:
         """
         Test login with valid credentials returns 200.
 
@@ -36,7 +36,7 @@ class TestLoginEndpoint:
         assert response.status_code == 200
         assert "key" in response.data
 
-    def test_login_invalid_credentials(self, api_client, user):
+    def test_login_invalid_credentials(self, api_client, user) -> None:
         """
         Test login with invalid credentials returns 400.
 
@@ -63,7 +63,7 @@ class TestLoginEndpoint:
 class TestRegistrationEndpoint:
     """Test suite for registration endpoint."""
 
-    def test_registration_success(self, api_client):
+    def test_registration_success(self, api_client) -> None:
         """
         Test registration with valid data returns 201 and creates user.
 
@@ -91,7 +91,7 @@ class TestRegistrationEndpoint:
         # Accept 201 (success) or 400 (requires additional config)
         assert response.status_code in [201, 400]
 
-    def test_registration_password_mismatch(self, api_client):
+    def test_registration_password_mismatch(self, api_client) -> None:
         """
         Test registration with mismatched passwords returns 400.
 
@@ -119,7 +119,7 @@ class TestRegistrationEndpoint:
 class TestLogoutEndpoint:
     """Test suite for logout endpoint."""
 
-    def test_logout_clears_session(self, api_client, user):
+    def test_logout_clears_session(self, api_client, user) -> None:
         """
         Test logout returns 200.
 
@@ -151,7 +151,7 @@ class TestLogoutEndpoint:
 class TestUserEndpoint:
     """Test suite for user details endpoint."""
 
-    def test_unauthenticated_user_request(self, api_client):
+    def test_unauthenticated_user_request(self, api_client) -> None:
         """
         Test GET /user/ without auth returns 401.
 
@@ -165,7 +165,7 @@ class TestUserEndpoint:
 
         assert response.status_code == 401
 
-    def test_authenticated_user_request(self, api_client, user):
+    def test_authenticated_user_request(self, api_client, user) -> None:
         """
         Test GET /user/ with auth returns user data.
 

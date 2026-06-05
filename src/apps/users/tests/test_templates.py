@@ -23,7 +23,7 @@ class TestTemplateComponents:
     )
 
     @pytest.mark.parametrize("template_path", COMPONENTS)
-    def test_component_exists(self, template_path):
+    def test_component_exists(self, template_path) -> None:
         """Each component template should exist and be loadable."""
         try:
             template = get_template(template_path)
@@ -31,7 +31,7 @@ class TestTemplateComponents:
         except TemplateDoesNotExist:
             pytest.fail(f"Template {template_path} does not exist")
 
-    def test_input_component_renders(self):
+    def test_input_component_renders(self) -> None:
         """Input component should render with context."""
         template = get_template("components/ui/input.html")
         rendered = template.render(
@@ -48,7 +48,7 @@ class TestTemplateComponents:
         assert "Test Label" in rendered
         assert 'placeholder="Test placeholder"' in rendered
 
-    def test_button_component_renders(self):
+    def test_button_component_renders(self) -> None:
         """Button component should render with text."""
         template = get_template("components/ui/button.html")
         rendered = template.render(
@@ -60,7 +60,7 @@ class TestTemplateComponents:
         assert "Submit" in rendered
         assert "fa-solid fa-check" in rendered
 
-    def test_link_component_renders(self):
+    def test_link_component_renders(self) -> None:
         """Link component should render with url and text."""
         template = get_template("components/ui/link.html")
         # URL tag needs proper context
@@ -85,20 +85,20 @@ class TestAuthTemplates:
     )
 
     @pytest.mark.parametrize("template_path", AUTH_TEMPLATES)
-    def test_auth_template_extends_base(self, template_path):
+    def test_auth_template_extends_base(self, template_path) -> None:
         """Auth templates should extend base.html."""
         template = get_template(template_path)
         source = template.template.source
         assert 'extends "base.html"' in source
 
-    def test_login_uses_components(self):
+    def test_login_uses_components(self) -> None:
         """Login should use input component."""
         template = get_template("account/login.html")
         source = template.template.source
         assert "components/ui/input.html" in source
         assert "components/ui/button.html" in source
 
-    def test_signup_uses_components(self):
+    def test_signup_uses_components(self) -> None:
         """Signup should use input components."""
         template = get_template("account/signup.html")
         source = template.template.source
@@ -108,7 +108,7 @@ class TestAuthTemplates:
 class TestTemplateReduction:
     """Verify template reduction targets are met."""
 
-    def test_login_smaller_than_original(self):
+    def test_login_smaller_than_original(self) -> None:
         """Login should be significantly smaller than 69 lines."""
         import os
 
@@ -119,7 +119,7 @@ class TestTemplateReduction:
             # Original was 69 lines
             assert lines < 50, f"Login is {lines} lines, should be < 50"
 
-    def test_signup_smaller_than_original(self):
+    def test_signup_smaller_than_original(self) -> None:
         """Signup should be significantly smaller than 60 lines."""
         import os
 
@@ -130,7 +130,7 @@ class TestTemplateReduction:
             # Original was 60 lines
             assert lines < 40, f"Signup is {lines} lines, should be < 40"
 
-    def test_password_reset_smaller_than_original(self):
+    def test_password_reset_smaller_than_original(self) -> None:
         """Password reset should be significantly smaller than 47 lines."""
         import os
 

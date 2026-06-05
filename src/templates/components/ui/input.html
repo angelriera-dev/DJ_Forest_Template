@@ -9,7 +9,7 @@ Variables:
 {% load widget_tweaks %}
 <div class="form-control w-full{% if class %} {{ class }}{% endif %}">
   {% if label or field.label %}
-  <label class="label pb-1" 
+  <label class="label pb-1"
          {% if field %}for="{{ field.id_for_label }}"{% elif id %}for="{{ id }}"{% elif name %}for="{{ name }}"{% endif %}>
     <span class="label-text text-sm font-medium">
       {% if label %}{{ label }}{% else %}{{ field.label }}{% endif %}
@@ -21,8 +21,8 @@ Variables:
   {% if field %}
     {% render_field field class+="input input-bordered w-full" placeholder=placeholder %}
   {% else %}
-    <input type="{{ type|default:'text' }}" 
-           {% if name %}name="{{ name }}"{% endif %} 
+    <input type="{{ type|default:'text' }}"
+           {% if name %}name="{{ name }}"{% endif %}
            {% if id %}id="{{ id }}"{% elif name %}id="{{ name }}"{% endif %}
       {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
       {% if value %}value="{{ value }}"{% endif %}

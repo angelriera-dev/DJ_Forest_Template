@@ -8,26 +8,26 @@ from apps.users.models import User
 
 
 class DashboardAccessTests(TestCase):
-    def test_dashboard_redirects_anonymous(self):
+    def test_dashboard_redirects_anonymous(self) -> None:
         response = self.client.get("/dashboard/")
         self.assertEqual(response.status_code, 302)  # type: ignore
 
-    def test_profile_redirects_anonymous(self):
+    def test_profile_redirects_anonymous(self) -> None:
         response = self.client.get("/dashboard/profile/")
         self.assertEqual(response.status_code, 302)  # type: ignore
 
-    def test_settings_redirects_anonymous(self):
+    def test_settings_redirects_anonymous(self) -> None:
         response = self.client.get("/dashboard/settings/")
         self.assertEqual(response.status_code, 302)  # type: ignore
 
-    def test_dashboard_accessible_when_logged_in(self):
+    def test_dashboard_accessible_when_logged_in(self) -> None:
         password = "testpass123"  # noqa: S105
         user = User.objects.create_user(email="test@example.com", password=password)
         self.client.force_login(user)
         response = self.client.get("/dashboard/")
         self.assertEqual(response.status_code, 200)  # type: ignore
 
-    def test_dashboard_home_renders_navigation_shell(self):
+    def test_dashboard_home_renders_navigation_shell(self) -> None:
         password = "testpass123"  # noqa: S105
         user = User.objects.create_user(email="test@example.com", password=password)
         self.client.force_login(user)
@@ -36,7 +36,7 @@ class DashboardAccessTests(TestCase):
         self.assertContains(response, "sidebar")
         self.assertContains(response, "Toggle theme")
 
-    def test_settings_page_renders_new_ui_sections(self):
+    def test_settings_page_renders_new_ui_sections(self) -> None:
         password = "testpass123"  # noqa: S105
         user = User.objects.create_user(email="test@example.com", password=password)
         self.client.force_login(user)
@@ -47,13 +47,13 @@ class DashboardAccessTests(TestCase):
 
 
 class AuthUiSmokeTests(TestCase):
-    def test_login_page_uses_modern_shell(self):
+    def test_login_page_uses_modern_shell(self) -> None:
         response = self.client.get(reverse("account_login"))
         self.assertEqual(response.status_code, 200)  # type: ignore
         self.assertContains(response, "Sign in")
         self.assertContains(response, "card bg-base-100")
 
-    def test_logout_page_uses_modern_confirmation(self):
+    def test_logout_page_uses_modern_confirmation(self) -> None:
         password = "testpass123"  # noqa: S105
         user = User.objects.create_user(email="test@example.com", password=password)
         self.client.force_login(user)
@@ -64,7 +64,7 @@ class AuthUiSmokeTests(TestCase):
 
 
 class SubscriptionPlanModelTests(TestCase):
-    def test_create_plan(self):
+    def test_create_plan(self) -> None:
         plan = SubscriptionPlan.objects.create(
             name="Pro",
             slug="pro",
@@ -76,7 +76,7 @@ class SubscriptionPlanModelTests(TestCase):
         self.assertEqual(str(plan), "Pro (Monthly)")
         self.assertTrue(plan.is_active)
 
-    def test_user_settings_created_on_access(self):
+    def test_user_settings_created_on_access(self) -> None:
         password = "testpass123"  # noqa: S105
         user = User.objects.create_user(email="test@example.com", password=password)
         settings, created = UserSettings.objects.get_or_create(user=user)
@@ -85,7 +85,7 @@ class SubscriptionPlanModelTests(TestCase):
 
 
 class ApiKeyHashingTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         password = "testpass123"  # noqa: S105
         self.user = User.objects.create_user(
             email="test@example.com",
@@ -93,7 +93,7 @@ class ApiKeyHashingTests(TestCase):
         )
         self.client.force_login(self.user)
 
-    def test_generate_api_key_stores_only_hash(self):
+    def test_generate_api_key_stores_only_hash(self) -> None:
         self.client.post(reverse("dashboard:generate_api_key"))
         settings = UserSettings.objects.get(user=self.user)
         plaintext = self.client.session["new_api_key"]
@@ -103,14 +103,14 @@ class ApiKeyHashingTests(TestCase):
         expected_hash = hashlib.sha256(plaintext.encode()).hexdigest()
         self.assertEqual(settings.api_key_hash, expected_hash)
 
-    def test_api_key_prefix_stored_for_display(self):
+    def test_api_key_prefix_stored_for_display(self) -> None:
         self.client.post(reverse("dashboard:generate_api_key"))
         settings = UserSettings.objects.get(user=self.user)
         plaintext = self.client.session["new_api_key"]
 
         self.assertEqual(settings.api_key_prefix, plaintext[:8])
 
-    def test_regenerating_key_replaces_hash(self):
+    def test_regenerating_key_replaces_hash(self) -> None:
         self.client.post(reverse("dashboard:generate_api_key"))
         first_hash = UserSettings.objects.get(user=self.user).api_key_hash
 

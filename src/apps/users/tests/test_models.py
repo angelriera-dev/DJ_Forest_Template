@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 class TestUserModel:
     """Test suite for User model."""
 
-    def test_create_user_with_email(self):
+    def test_create_user_with_email(self) -> None:
         """Test creating a user with email as username."""
         user_model = get_user_model()
         password = "testpass123"  # noqa: S105
@@ -27,7 +27,7 @@ class TestUserModel:
         assert not user.is_staff
         assert user.is_active
 
-    def test_create_user_without_email_raises_error(self):
+    def test_create_user_without_email_raises_error(self) -> None:
         """Test that creating a user without email raises ValueError."""
         user_model = get_user_model()
         password = "testpass123"  # noqa: S105
@@ -38,7 +38,7 @@ class TestUserModel:
                 password=password,
             )
 
-    def test_create_superuser(self):
+    def test_create_superuser(self) -> None:
         """Test creating a superuser."""
         user_model = get_user_model()
         password = "adminpass123"  # noqa: S105
@@ -52,14 +52,14 @@ class TestUserModel:
         assert superuser.is_staff
         assert superuser.is_active
 
-    def test_user_str_returns_email(self):
+    def test_user_str_returns_email(self) -> None:
         """Test that User string representation returns email."""
         user_model = get_user_model()
         user = user_model(email="string@example.com")
 
         assert str(user) == "string@example.com"
 
-    def test_user_email_is_unique(self):
+    def test_user_email_is_unique(self) -> None:
         """Test that user email must be unique."""
         user_model = get_user_model()
         password = "testpass123"  # noqa: S105
@@ -74,7 +74,7 @@ class TestUserModel:
                 password=password,
             )
 
-    def test_user_verbose_names(self):
+    def test_user_verbose_names(self) -> None:
         """Test verbose names for User model."""
         user_model = get_user_model()
         user = user_model(email="verbose@example.com")
@@ -82,7 +82,7 @@ class TestUserModel:
         assert user._meta.verbose_name == "User"
         assert user._meta.verbose_name_plural == "Users"
 
-    def test_user_ordering(self):
+    def test_user_ordering(self) -> None:
         """Test that users are ordered by date_joined descending."""
         user_model = get_user_model()
         password = "pass12345"  # noqa: S105
@@ -102,13 +102,13 @@ class TestUserModel:
         # Second user should be first (newest first)
         assert users[0] == user2
 
-    def test_user_required_fields(self):
+    def test_user_required_fields(self) -> None:
         """Test that REQUIRED_FIELDS is empty (email is the only required field)."""
         user_model = get_user_model()
 
         assert user_model.REQUIRED_FIELDS == ()
 
-    def test_user_username_field(self):
+    def test_user_username_field(self) -> None:
         """Test that USERNAME_FIELD is set to email."""
         user_model = get_user_model()
 
