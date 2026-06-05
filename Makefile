@@ -16,7 +16,12 @@ SRC_DIR := src
 
 init:
 	uv sync
-
+	@if [ -e ".env" ]; then \
+	    echo ".env already exists. Skipping creation."; \
+	else \
+	    echo "Creating .env from .env.example..."; \
+	    cp .env.example .env; \
+	fi
 dev:
 	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev
 
@@ -113,15 +118,12 @@ temp:
 
 TEMPLATE_URL := https://github.com/angelriera-dev/Sass_Forest_Bolier.git
 
-saas-init:
+template-init:
 	@echo "Configuring upstream template for Extensible mode..."
 	git remote add template $(TEMPLATE_URL) || echo "Remote 'template' already exists."
 	@echo "Done. Use 'make saas-sync' to pull updates."
 
-saas-sync:
-	@echo "create a new branch"
+template-sync:
 	@git checkout -b update-template
-	@echo "Fetching updates from template..."
-	git fetch template
-	@echo "Merging updates..."
-	git merge template/main --allow-unrelated-histories
+	@git fetch template
+	@git merge --squash --allow-unrelated-histories template/main
