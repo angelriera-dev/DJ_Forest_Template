@@ -1,5 +1,8 @@
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import apps.dashboard.tasks
 from collections.abc import Callable
-from typing import Any
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -37,14 +40,14 @@ def _send_trial_started_email(user_email: str) -> None:
     )
 
 
-class _TaskShim:
-    def __init__(self, fn: Callable[..., Any]) -> None:
+class TaskShim:
+    def __init__(self: "apps.dashboard.tasks.TaskShim", fn: Callable[..., Any]) -> None:
         self._fn = fn
 
     def enqueue(self, *args: Any, **kwargs: Any) -> Any:
         return self._fn(*args, **kwargs)
 
 
-send_subscription_confirmation_email = _TaskShim(_send_subscription_confirmation_email)
-send_subscription_cancellation_email = _TaskShim(_send_subscription_cancellation_email)
-send_trial_started_email = _TaskShim(_send_trial_started_email)
+send_subscription_confirmation_email = TaskShim(_send_subscription_confirmation_email)
+send_subscription_cancellation_email = TaskShim(_send_subscription_cancellation_email)
+send_trial_started_email = TaskShim(_send_trial_started_email)

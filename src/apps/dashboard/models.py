@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import apps.dashboard.models
+
 
 from django.conf import settings
 from django.db import models
@@ -31,7 +35,7 @@ class SubscriptionPlan(BaseModel):
         verbose_name = "Subscription Plan"
         verbose_name_plural = "Subscription Plans"
 
-    def __str__(self) -> str:
+    def __str__(self: apps.dashboard.models.SubscriptionPlan) -> str:
         # Cast para evitar error de tipado en acceso dinámico
         interval = str(self.get_interval_display())  # type: ignore
         return f"{self.name} ({interval})"
@@ -97,7 +101,7 @@ class UserSettings(BaseModel):
         return f"Settings for {user_email}"
 
     @property
-    def is_subscription_active(self) -> bool:
+    def is_subscription_active(self: apps.dashboard.models.UserSettings) -> bool:
         if self.subscription_status != "active":
             return False
         if self.subscription_end_date and self.subscription_end_date < timezone.now():
@@ -105,7 +109,7 @@ class UserSettings(BaseModel):
         return True
 
     @property
-    def is_trial_active(self) -> bool:
+    def is_trial_active(self: apps.dashboard.models.UserSettings) -> bool:
         if self.subscription_status != "trial":
             return False
         if self.trial_end_date and self.trial_end_date < timezone.now():

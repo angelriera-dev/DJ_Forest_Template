@@ -498,6 +498,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
+    { name = "righttyper" },
     { name = "ruff" },
     { name = "semgrep" },
 ]
@@ -528,6 +529,7 @@ dev = [
     { name = "pytest", specifier = ">=9.0.3" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
     { name = "pytest-django", specifier = ">=4.12.0" },
+    { name = "righttyper", specifier = ">=0.0.9" },
     { name = "ruff", specifier = ">=0.9.1" },
     { name = "semgrep", specifier = ">=1.106.0" },
 ]
@@ -1409,6 +1411,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz", hash = "sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36", size = 230680, upload-time = "2026-04-12T08:24:00.75Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/82/3b/64d4899d73f91ba49a8c18a8ff3f0ea8f1c1d75481760df8c68ef5235bf5/rich-15.0.0-py3-none-any.whl", hash = "sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb", size = 310654, upload-time = "2026-04-12T08:24:02.83Z" },
+]
+
+[[package]]
+name = "righttyper"
+version = "0.0.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "libcst" },
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b8/22/3feb1811e3cb9a184279ee3345afaf7887796f70c30cd258a924ff1b7bb7/righttyper-0.0.9.tar.gz", hash = "sha256:7c3fe049df13cf04d0fba507528cca65b41856fe94efbe95ef94ffc37f70a21f", size = 53102, upload-time = "2024-12-19T01:11:06.665Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9d/ac/b4fcbaa0df5b4eec2ba0a2f1ad96d1b48d419b96e193065ba6b494513530/righttyper-0.0.9-py3-none-any.whl", hash = "sha256:1e681e683d79d48f9c8994ecac7e80e20bf11bbad59b7c534ad001ee08bbd657", size = 44660, upload-time = "2024-12-19T01:11:04.542Z" },
 ]
 
 [[package]]

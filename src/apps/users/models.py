@@ -1,8 +1,12 @@
 # pyright: reportIncompatibleVariableOverride=false, reportMissingTypeArgument=false
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any, ClassVar
+
+if TYPE_CHECKING:
+    import apps.users.models
+
 import uuid
-from typing import Any, ClassVar
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.contrib.auth.password_validation import validate_password
@@ -15,7 +19,10 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(
-        self, email: str, password: str | None = None, **extra_fields: Any
+        self: apps.users.models.UserManager,
+        email: str,
+        password: str | None = None,
+        **extra_fields: Any,
     ) -> User:
         """Create and save a regular user."""
         if not email:
@@ -33,7 +40,10 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(
-        self, email: str, password: str | None = None, **extra_fields: Any
+        self: apps.users.models.UserManager,
+        email: str,
+        password: str | None = None,
+        **extra_fields: Any,
     ) -> User:
         """Create and save a superuser."""
         extra_fields.setdefault("username", "")
@@ -90,5 +100,5 @@ class User(AbstractUser):
         verbose_name_plural = "Users"
         ordering = ("-date_joined",)
 
-    def __str__(self) -> str:
+    def __str__(self: apps.users.models.User) -> str:
         return str(self.email)

@@ -51,33 +51,32 @@ migrate:
 # ========================= QUALITY TEST ============================
 # ===================================================================
 
-check:
-	$(UV_CMD) run src/manage.py check
+autotype:
+	$(UV_CMD) run righttyper \
+		--output-files \
+		--overwrite \
+		--include-files '^(?!.*(migrations|tests|settings|wsgi|asgi|manage)).*\.py$$' \
+		-m pytest --continue-on-collection-errors
+	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
+	$(UV_CMD) run ruff format $(SRC_DIR)
+	$(UV_CMD) run pyright $(SRC_DIR)
+	@echo "✅ Autotipado completo. Revisa con: git diff"
 
 pytest:
-	$(UV_CMD) run pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
+	$(UV_CMD) run  pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
 
-lint:
+cs:
 	$(UV_CMD) run ruff check $(SRC_DIR)
-
-check_types:
-	$(UV_CMD) run pyright $(SRC_DIR)
-
-autotype:
-	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
-
-security_scan:
 	@echo "Running Bandit (Security Linter)..."
 	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit
 	@echo "Running Semgrep (OWASP Scans)..."
 	$(UV_CMD) run semgrep scan --config auto $(SRC_DIR)
 
+test: cs pytest
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
-	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage uv.lock
-
-run_tests: clean check lint check_types security_scan pytest
-
+	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage
 
 
 # ===============================================================
