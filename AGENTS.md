@@ -25,6 +25,21 @@ This project provides a production-ready, audited foundation with zero shortcuts
 - English-only output from agents
 - Treat `AGENTS.md` as living agent documentation; update it when project workflow or conventions change
 
+## Methodological Approach: Secure by Design + TDD
+
+
+**TDD (Mandatory):**
+
+- Every new feature follows the **Red → Green → Refactor** cycle.
+- Cover models, business services (SRS logic), views, and validation/comparison logic.
+- Use `pytest-django`.
+- Integration tests for the entire <app_name> workflow.
+- High coverage (>85% in critical logic). Tests **must always pass** before merging.
+- Security tests (ownership properties, input validation, rate limits).
+
+**General methodology:** Short iterations (1–2 weeks), focus on the **core loop** of the <app_name> from the very first weeks.
+
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -40,30 +55,164 @@ This project provides a production-ready, audited foundation with zero shortcuts
 ## Project Structure
 
 ```
-my_sass/
+src/                        # ← BASE_DIR resolves here (not the repo root)
 ├── apps/
-│   ├── users/          # User management + allauth
-│   └── dashboard/      # Main app views
-├── templates/
-│   ├── components/     # Reusable UI components
-│   ├── account/        # allauth templates
-│   └── dashboard/      # App templates
-├── config/
-│   └── settings/       # Django settings (modular hierarchy)
+│   ├── users/              # User management + allauth
+│   ├── dashboard/          # Main app views
+│   └── <app_name>/              # <app_name> app with SRS
+│       ├── urls.py         # Standard views (full-page HTML)
+│       ├── views.py        # Standard view logic
+│       ├── api/            # API routes (versioned)
+│       │   ├── urls.py     # API URL patterns (v1, v2, etc.)
+│       │   └── views.py    # HTMX partials + REST endpoints
+│       ├── templates/      # App-specific templates
+│       └── tests/          # Test suite
+├── static/                 # STATICFILES_DIRS points here → /static/ URL
+│   ├── css/styles.css      # Project-specific styles (not CDN)
+│   └── js/
+│       ├── theme.js        # Theme bootstrap — no defer, no Alpine dependency
+│       └── alpine_init.js  # Alpine.data() registrations only
+├── templates/              # TEMPLATES DIRS points here
+│   ├── components/
+│   │   ├── cdns.html       # ALL external CDNs: Tailwind, DaisyUI, HTMX, Alpine
+│   │   └── Layout/
+│   │       └── navbar.html # Theme toggle lives here (daisyUI theme-controller)
+│   ├── account/            # allauth templates
+├── config/                 # Django config package — settings/ is a DIRECTORY
+│   ├── urls.py             # Main URL configuration
+│   └── settings/           # Modular settings — read individual files, not the folder
+│       ├── base.py         # Core settings + INSTALLED_APPS + TEMPLATES
+│       ├── dev.py          # Development overrides
+│       ├── prod.py         # Production overrides
+│       └── core/
+│           ├── storage.py  # STATIC_URL, STATICFILES_DIRS, MEDIA_ROOT
+│           ├── security.py # Security headers, HTTPS settings
+│           └── database.py # DB config
 ├── docs/
-│   ├── PDR/            # Product Requirements Document
-│   └── adr/            # Architecture Decision Records
-├── AGENTS.md           # This file
-├── CHANGELOG.md        # Change log
-├── Makefile            # Build entry point
+│   ├── PDR/                # Product Requirements Document
+│   └── adr/                # Architecture Decision Records
+├── AGENTS.md               # This file
+├── CHANGELOG.md            # Change log
+├── Makefile                # Build entry point
 └── requirements.txt
 ```
+
+### Critical path facts
+
+- `BASE_DIR` = `src/` — all relative paths start here, not from the repo root
+- `STATICFILES_DIRS = [BASE_DIR / "static"]` → physical: `src/static/`, URL: `/static/`
+- `TEMPLATES DIRS = [BASE_DIR / "templates"]` → `src/templates/`
+- `src/config/settings/` is a **directory** (Python package), not a file — always read specific files inside it (`base.py`, `core/storage.py`, etc.)
+- `src/media/` is for user-uploaded files (MEDIA_ROOT), not static assets
+
+## Frontend Conventions
+
+### Static files
+
+- Assets go in `src/static/` — never inside `src/templates/`
+- Use `{% load static %}` + `{% static 'path' %}` in templates — never hardcode `/static/` paths
+- `src/templates/components/cdns.html` contains **all** external CDNs (Tailwind, DaisyUI, HTMX, Alpine) — do not delete or split it
+
+### JS loading order (critical)
+
+The order in `base.html` is intentional and must be preserved:
+
+```html
+<script src="{% static 'js/theme.js' %}"></script>       {# no defer — runs before first paint #}
+{% include "components/cdns.html" %}                      {# CDNs including Alpine #}
+<script src="{% static 'js/alpine_init.js' %}" defer></script>  {# defer — registers before Alpine boots #}
+```
+
+- `theme.js` — IIFE, no Alpine dependency, no defer. Applies theme and color variables before paint.
+- `alpine_init.js` — registers `Alpine.data()` components by listening to `alpine:init`. Must load with `defer` so it races correctly with the Alpine CDN. **Never** put theme logic here.
+- Mixing theming into `alpine_init.js` causes `app is not defined` errors on navigation and cross-browser failures because Alpine may boot before the script executes.
+
+### Theming
+
+- Light/dark toggle uses daisyUI's native `theme-controller` (CSS only, no Alpine):
+  ```html
+  <label class="swap swap-rotate">
+    <input type="checkbox" class="theme-controller" value="dark" />
+    ...
+  </label>
+  ```
+- Custom color variables (`--color-primary`, `--color-secondary`, `--color-accent`) are set via `document.documentElement.style.setProperty()` and persisted in `localStorage` — no build step needed.
+- `theme.js` restores both the light/dark state and any custom color variables on every page load.
+- Do **not** use Alpine `$watch`, `toggleTheme()`, or `x-data` for theming.
+
+### settings/ is a directory, not a file
+
+`src/config/settings/` is a Python package. Always read specific files:
+- `src/config/settings/base.py` — INSTALLED_APPS, TEMPLATES, MIDDLEWARE
+- `src/config/settings/core/storage.py` — STATIC_URL, STATICFILES_DIRS, MEDIA_ROOT
+- `src/config/settings/core/security.py` — security headers
+- `src/config/settings/dev.py` / `prod.py` — environment overrides
+
+Never attempt to read or cat `src/config/settings/` as if it were a file.
+
+## Routing Conventions
+
+### URL Structure
+
+The project uses a two-tier routing system:
+
+1. **Standard Views** (`/<prefix>/`): Full-page HTML responses for client-side navigation
+2. **API Routes** (`/api/`): Versioned endpoints for HTMX partials and REST APIs
+
+### Route Categories
+
+#### Standard Views (`app/urls.py`)
+- Mounted at a descriptive prefix (e.g., `/dashboard/`, `/app/`)
+- Serve complete HTML pages
+- HTMX-compatible (return partials when HX-Request header present)
+- Examples: Home dashboard, page initialization
+
+#### API Routes (`app/api/urls.py`)
+- Mounted at `/api/<app>/` in main URL config
+- Two sub-categories:
+
+**HTMX Partials** (prefix `hx_` conceptually):
+- Return HTML fragments for HTMX `hx-get`/`hx-post` targets
+- Session-dependent state management
+- Examples: Carousel navigation, CRUD operations
+
+**REST Endpoints** (prefix `rest` conceptually):
+- Return `JsonResponse` for API consumers
+- Versioned path prefix (`v1/`, `v2/`, etc.)
+- Authentication required
+- Examples: Resource list endpoint
+
+### Versioning Strategy
+
+API routes use path-based versioning:
+- Current: `/api/<app>/v1/<resource>/`
+- Future: `/api/<app>/v2/<resource>/` for breaking changes
+- Version prefix defined in `app/api/urls.py` `urlpatterns`
+
+### Adding New Routes
+
+1. **Standard views**: Add to `app/urls.py` and `app/views.py`
+2. **HTMX partials**: Add to `app/api/urls.py` and `app/api/views.py`
+3. **REST endpoints**: Add versioned route to `app/api/urls.py` with `v1/` prefix
+4. **New API version**: Create new `v2/` prefix in `app/api/urls.py` when needed
+
+### Naming Conventions
+
+- Standard views: `<app>:<action>` (e.g., `<app_name>:page_home`, `dashboard:settings`)
+- API routes: `<app>:api_<resource>` (e.g., `<app_name>:api_action`)
+- Use underscores, not hyphens, in URL names
+- Prefix API names with `api_` when they return JSON
+
+### Reference
+
+For detailed routing patterns and examples, see `docs/adr/ADR-routing-convention.md`.
 
 ## Available Skills
 
 | Skill | Trigger | Location |
 |-------|---------|----------|
 | **local-architecture-docs** | Editing `docs/`, ADRs, governance, documentation indexes | `SKILLS/local-architecture-docs/SKILL.md` |
+| **local-architecture-routing** | Creating/modifying URL patterns, API routes, versioning | `SKILLS/local-architecture-routing/SKILL.md` |
 | **local-architecture-templates** | Modifying `templates/`, components, and template conventions | `SKILLS/local-architecture-templates/SKILL.md` |
 | **saas-workflow** | Managing template upstream, syncing, or SaaS project initialization | `SKILLS/saas-workflow/SKILL.md` |
 | **django-htmx** (global) | HTMX, Alpine.js, Tailwind patterns | Loaded on-demand |
@@ -110,13 +259,14 @@ Do **not** jump directly into implementation. Update project context first.
    - Update `AGENTS.md` for stack, commands, structure, and mandatory workflow.
    - Update the relevant `SKILL.md` files for task-specific execution rules.
    - Update `.atl/skill-registry.md` only as a discovery index after the governing files are correct.
-4. **Update the formal process document**
+4. **TDD + Secure by Design**
+5. **Update the formal process document**
    - Keep `docs/workflow-governance.md` aligned with the required sequence and checklists.
-5. **Record the change**
+6. **Record the change**
    - Add a `CHANGELOG.md` entry summarizing the governance update and affected files.
-6. **Only then implement**
+7. **Only then implement**
    - Make code or template changes after the context and instructions are synchronized.
-7. **Validate**
+8. **Validate**
    - Run the relevant checks, at minimum `make test`, `make lint`, and `make type-check` when applicable.
 
 ### Non-Negotiable Rules
