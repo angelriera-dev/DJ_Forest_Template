@@ -42,4 +42,12 @@ LOGGING = {
         "handlers": ["console"],
         "level": "DEBUG",
     },
+    "filters": {
+        "ignore_debug": {
+            "()": "config.settings.core.loggin.IgnoreDebugToolbarFilter",
+        },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
 }

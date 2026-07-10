@@ -34,6 +34,7 @@ class UserManager(BaseUserManager):
         model: Any = self.model  # type: ignore[reportUnknownMemberType]
         user = model(email=normalized_email, username=username, **extra_fields)
         if password is not None:
+            # ponytail: validated by django.contrib.auth.password_validation.validate_password, #nosec
             validate_password(password, user=user)
         user.set_password(password)
         user.save(using=self._db)

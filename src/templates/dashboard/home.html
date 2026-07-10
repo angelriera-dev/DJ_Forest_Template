@@ -8,36 +8,13 @@
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="mb-8 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm sm:p-8">
-  <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-    <div>
-      <p class="text-xs uppercase tracking-wider text-base-content/50">Welcome back</p>
-      <h2 class="mt-2 text-3xl font-semibold tracking-tight">
-        {% if user.first_name %}{{ user.first_name }}, {% endif %}this is your workspace
-      </h2>
-      <p class="mt-2 max-w-2xl text-sm text-base-content/60">
-        A cleaner dashboard shell, consistent navigation, and a theme that now persists across every route.
-      </p>
-    </div>
-    <div class="flex flex-wrap gap-2">
-      <a href="{% url 'dashboard:profile' %}" class="btn btn-outline btn-sm">Edit profile</a>
-      <a href="{% url 'dashboard:subscription_plans' %}" class="btn btn-primary btn-sm">View plans</a>
-    </div>
-  </div>
-</div>
 
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-  {% include "dashboard/ui/stat_card.html" with title="Users" value="1" icon="fa-users" subtitle="Total registered" %}
-  {% include "dashboard/ui/stat_card.html" with title="Projects" value="0" icon="fa-folder" subtitle="Active projects" %}
-  {% include "dashboard/ui/stat_card.html" with title="Plan" value="Free" icon="fa-gem" link_url="dashboard:subscription_plans" link_text="Upgrade plan" %}
-</div>
+
 
 <div class="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
   <div class="lg:col-span-2">
     {% include "dashboard/ui/activity_list.html" with items=activities %}
   </div>
-  <div>
-    {% include "dashboard/ui/quick_actions.html" with actions=quick_actions %}
-  </div>
+
 </div>
 {% endblock %}

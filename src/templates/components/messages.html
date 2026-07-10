@@ -1,0 +1,32 @@
+<!-- Global Toast Container -->
+<div class="toast toast-end toast-bottom z-[999]">
+    <template x-for="n in notifications" :key="n.id">
+        <div class="alert shadow-lg" :class="{
+          'alert-info': n.type === 'info',
+          'alert-success': n.type === 'success',
+          'alert-error': n.type === 'error',
+          'alert-warning': n.type === 'warning'
+        }" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4"
+            x-transition:leave="transition ease-in duration-300 opacity-0 scale-95">
+            <span x-text="n.text"></span>
+        </div>
+    </template>
+</div>
+
+
+{% if messages %}
+<div class="px-4 pt-4 sm:px-6 lg:px-8">
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+    {% include "components/alert.html" with type="error" icon="fa-solid fa-circle-exclamation" text=message
+    dismissible=True class="mb-3" %}
+    {% elif message.tags == 'success' %}
+    {% include "components/alert.html" with type="success" icon="fa-solid fa-check" text=message dismissible=True
+    class="mb-3" %}
+    {% else %}
+    {% include "components/alert.html" with type="info" icon="fa-solid fa-circle-info" text=message dismissible=True
+    class="mb-3" %}
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}

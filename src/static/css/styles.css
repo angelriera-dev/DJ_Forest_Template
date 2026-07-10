@@ -1,0 +1,14 @@
+body,
+html {
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* ── View Transitions ─────────────────────────────────────────── */
+@view-transition { navigation: auto; }
+
+
