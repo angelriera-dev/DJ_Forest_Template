@@ -1,11 +1,3 @@
----
-name: django-fortress-saas
-description: >
-  Security-first Django 6.x SaaS monolith with HTMX, Alpine.js, Tailwind CSS, and DaisyUI.
-  Reference implementation of OWASP Top 10 2026 mitigations with modular, tested architecture.
-version: "1.0"
----
-
 # Django Fortress SaaS — Agent Configuration
 
 ## Project Overview
@@ -27,7 +19,6 @@ This project provides a production-ready, audited foundation with zero shortcuts
 
 ## Methodological Approach: Secure by Design + TDD
 
-
 **TDD (Mandatory):**
 
 - Every new feature follows the **Red → Green → Refactor** cycle.
@@ -39,6 +30,16 @@ This project provides a production-ready, audited foundation with zero shortcuts
 
 **General methodology:** Short iterations (1–2 weeks), focus on the **core loop** of the <app_name> from the very first weeks.
 
+## Template Integration (Surgical Workflow)
+
+Any integration with the `template` remote (contributions or syncs) MUST use the **Surgical Integration Workflow**.
+
+- **Rule**: Never use standard git merge/squash for template contributions.
+- **Protocol**: 
+  1. Create a branch from `template/main`.
+  2. Use `scripts/template-contribute.sh` to stage only intended files.
+  3. Validate with `scripts/template-pr-check.sh` before pushing.
+- **Reference**: See `SKILLS/local-architecture-templates/SKILL.md` for the full procedure.
 
 ## Tech Stack
 
@@ -275,7 +276,6 @@ Do **not** jump directly into implementation. Update project context first.
 - Any new integration that changes project conventions must update both `AGENTS.md` and the relevant `SKILL.md`.
 - Skills must stay concise and use progressive disclosure; put detailed procedures in focused docs and reference them.
 - If a file becomes stale after a migration, update it in the same change rather than leaving conflicting instructions behind.
-
 
 ## Avoid redundant files rule
 

@@ -34,6 +34,14 @@ This project supports two different workflows for downstream SaaS projects:
 - **Syncing:** Updates are pulled cleanly via `make saas-sync` with minimal conflicts since protected files weren't touched.
 - **Setup:** `make saas-collab`
 
+### Contributing back to Upstream (Surgical Workflow)
+When you have improvements to the template (Extensible mode), do NOT use a standard merge. Use the Surgical Integration Workflow to keep history clean and avoid leaking private app code:
+- **Protocol**: 
+  1. Create a branch from `template/main`.
+  2. Use `scripts/template-contribute.sh` to stage only intended files.
+  3. Validate with `scripts/template-pr-check.sh` before pushing.
+- **Reference**: See `SKILLS/local-architecture-templates/SKILL.md`.
+
 ## Agent Guidelines
 - If an agent is working in a Collaborative SaaS project and tries to modify a protected file (like `config/settings.py`), it MUST stop and explain that the file is protected by the template. The change should be made in the upstream template repository instead, or the SaaS project must be converted to Extensible mode by removing the pre-commit hook.
 - Do not create custom scripts for syncing; always use the `Makefile` commands (`saas-init`, `saas-collab`, `saas-sync`) or the raw bash one-liners documented in the `README.md`.
