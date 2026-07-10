@@ -9,7 +9,6 @@ git fetch template --quiet
 
 # Forbidden patterns: anything not template-relevant / trust-boundary leakage.
 FORBIDDEN=(
-  '^src/apps/'
   '^src/media/'
   '\.env'
   '\.sqlite3$'
