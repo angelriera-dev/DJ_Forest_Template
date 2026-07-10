@@ -1,5 +1,8 @@
 
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import django.core.handlers.wsgi
 NAV_LINKS = [
     {"name": "Dashboard", "url": "dashboard:home", "icon": "🏠"},
     { "name": "Edit profile", "url": "dashboard:profile", "icon": "👤", },
@@ -8,5 +11,5 @@ NAV_LINKS = [
 
 
 ]
-def navigation(request):
+def navigation(request: "django.core.handlers.wsgi.WSGIRequest") -> dict[str, list[dict[str, str]]]:
     return {'nav_items': NAV_LINKS}
