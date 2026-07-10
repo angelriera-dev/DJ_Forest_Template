@@ -9,44 +9,68 @@
 </style>
 {% endblock %}
 
-{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
 
 {% block content %}
-<div class="min-h-[calc(100vh-5rem)] lg:flex">
-    {% include "dashboard/layout/sidebar.html" %}
 
-    <div class="flex min-h-[calc(100vh-5rem)] flex-1 flex-col lg:pl-72">
-        <header class="sticky top-16 z-40 border-b border-base-200 bg-base-100/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-xl font-semibold leading-none">{% block h1 %}Overview{% endblock %}</h1>
+{# Wordbook drawer (right) — wrapper externo. El app-drawer (left) vive dentro. #}
+<div class="drawer drawer-end">
+  <input id="wordbook-drawer" type="checkbox" class="drawer-toggle" />
 
-  <p class="mt-2 text-sm text-base-content/60">{% block h1_d %}{% endblock %}</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    {% block page_actions %}{% endblock %}
-                </div>
+  <div class="drawer-content">
+
+    <div class="drawer lg:drawer-open">
+      <input id="app-drawer" type="checkbox" class="drawer-toggle" />
+
+      <div class="drawer-content">
+
+        <div class="w-full 
+        flex 
+        flex-col
+         lg:pl-68 lg:pr-24
+         ">
+
+          <header class="mt-16  border-b border-base-200 bg-base-100/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center lg:justify-between ">
+              <div>
+                <h1 class="text-xl font-semibold leading-none">{% block h1 %}Overview{% endblock %}</h1>
+                {% block h1_d %}{% endblock %}
+              </div>
+              {% block page_actions %}{% endblock %}
             </div>
-        </header>
+          </header>
 
-
-        <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          <main class="w-full px-2 py-2 sm:px-4 lg:px-6 ">
             {% block dashboard_content %}{% endblock %}
-        </main>
+          </main>
 
-        {% if messages %}
-        <div class="px-4 pt-4 sm:px-6 lg:px-8">
-            {% for message in messages %}
-            {% if message.tags == 'error' %}
-                {% include "components/alert.html" with type="error" icon="fa-solid fa-circle-exclamation" text=message dismissible=True class="mb-3" %}
-            {% elif message.tags == 'success' %}
-                {% include "components/alert.html" with type="success" icon="fa-solid fa-check" text=message dismissible=True class="mb-3" %}
-            {% else %}
-                {% include "components/alert.html" with type="info" icon="fa-solid fa-circle-info" text=message dismissible=True class="mb-3" %}
-            {% endif %}
-            {% endfor %}
         </div>
-        {% endif %}
+      </div>
+
+      <div class="drawer-side">
+        <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+        {% include "dashboard/layout/sidebar.html" %}
+      </div>
     </div>
+
+    {% include "dashboard/layout/bottom_bar.html" %}
+
+  </div>
+
+  {# Wordbook drawer side (right panel, mobile) #}
+  <div class="drawer-side w-full">
+    <label for="wordbook-drawer" aria-label="close wordbook" class="drawer-overlay"></label>
+    <div class="bg-base-200 min-h-[calc(100vh-4rem)] w-full p-4 pt-24">
+      action
+    </div>
+  </div>
+
 </div>
+
+{% endblock %}
+
+
+{% block footer %}
+<footer class="hidden lg:block px-6 md:px-10 py-6 muted text-xs text-center border-t border-[#1f2330] mt-10">
+  SaaS Boiler · Flashcards module
+</footer>
 {% endblock %}

@@ -5,7 +5,8 @@ from . import views
 app_name = "dashboard"
 
 urlpatterns = [
-    path("", views.dashboard_home, name="home"),
+    path("", views.landing, name="landing"),
+    path("home/", views.dashboard_home, name="home"),
     path("profile/", views.profile, name="profile"),
     path("settings/", views.settings, name="settings"),
     path("settings/generate-api-key/", views.generate_api_key, name="generate_api_key"),

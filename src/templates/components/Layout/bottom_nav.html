@@ -1,0 +1,7 @@
+<div class="btm-nav md:hidden z-50">
+  {% for link in nav_items %}
+    <a href="{% url link.url %}" class="{% if request.resolver_match.url_name == link.url %}active{% endif %}">
+      <span>{{ link.name }}</span>
+    </a>
+  {% endfor %}
+</div>

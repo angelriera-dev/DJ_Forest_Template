@@ -61,6 +61,57 @@
         </div>
     </form>
 
+    {# Theme customization — CSS variables only, persisted in localStorage #}
+    <section class="card bg-base-100 border border-base-200 shadow-sm">
+        <div class="card-body p-0">
+            <div class="px-6 py-4 border-b border-base-200">
+                <h3 class="text-sm font-medium">Theme colors</h3>
+                <p class="mt-1 text-xs text-base-content/50">Customize the accent colors of the interface.</p>
+            </div>
+            <div class="divide-y divide-base-200" id="theme-picker">
+                <label class="flex cursor-pointer items-center justify-between gap-4 px-6 py-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-content">
+                            <i class="fa-solid fa-palette text-xs leading-none"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Primary color</p>
+                            <p class="mt-0.5 text-xs text-base-content/60">Main action color — buttons, links, highlights.</p>
+                        </div>
+                    </div>
+                    <input type="color" id="color-primary" class="w-10 h-10 rounded-full cursor-pointer border-0 bg-transparent p-0" title="Pick primary color">
+                </label>
+                <label class="flex cursor-pointer items-center justify-between gap-4 px-6 py-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-secondary-content">
+                            <i class="fa-solid fa-droplet text-xs leading-none"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Secondary color</p>
+                            <p class="mt-0.5 text-xs text-base-content/60">Supporting color for secondary elements.</p>
+                        </div>
+                    </div>
+                    <input type="color" id="color-secondary" class="w-10 h-10 rounded-full cursor-pointer border-0 bg-transparent p-0" title="Pick secondary color">
+                </label>
+                <label class="flex cursor-pointer items-center justify-between gap-4 px-6 py-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-content">
+                            <i class="fa-solid fa-star text-xs leading-none"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Accent color</p>
+                            <p class="mt-0.5 text-xs text-base-content/60">Used for badges, tags, and highlights.</p>
+                        </div>
+                    </div>
+                    <input type="color" id="color-accent" class="w-10 h-10 rounded-full cursor-pointer border-0 bg-transparent p-0" title="Pick accent color">
+                </label>
+            </div>
+            <div class="flex justify-end gap-2 border-t border-base-200 bg-base-200/30 px-6 py-4">
+                <button type="button" id="reset-colors" class="btn btn-ghost btn-sm">Reset to default</button>
+            </div>
+        </div>
+    </section>
+
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <section class="card bg-base-100 border border-base-200 shadow-sm">
             <div class="card-body p-0">

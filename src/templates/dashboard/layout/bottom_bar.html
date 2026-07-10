@@ -1,0 +1,50 @@
+<div class="lg:hidden fixed bottom-0 w-full z-30">
+    <div class="dock dock-md">
+
+        <button>
+            <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt">
+                    <polyline points="1 11 12 2 23 11" fill="none" stroke="currentColor" stroke-miterlimit="10"
+                        stroke-width="2"></polyline>
+                    <path d="m5,13v7c0,1.105.895,2,2,2h10c1.105,0,2-.895,2-2v-7" fill="none" stroke="currentColor"
+                        stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path>
+                    <line x1="12" y1="22" x2="12" y2="18" fill="none" stroke="currentColor" stroke-linecap="square"
+                        stroke-miterlimit="10" stroke-width="2"></line>
+                </g>
+            </svg>
+            <span class="dock-label">Home</span>
+        </button>
+
+        <div class="-mt-12 z-20 text-white">
+            <button class="btn btn-xl p-2 btn-primary btn-circle" onclick="create_card_modal.showModal()"
+                hx-get="/api/any_action" hx-target="#create_card_modal_body" hx-trigger="click"
+                hx-swap="innerHTML">➕</button>
+        </div>
+
+        <label for="wordbook-drawer" class="flex flex-col justify-center items-center cursor-pointer">
+
+
+            <!-- hamburger icon -->
+            <svg class="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                viewBox="0 0 512 512">
+                <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
+            </svg>
+
+
+            <span class="dock-label">Wordbook</span>
+
+        </label>
+
+    </div>
+</div>
+
+
+<dialog id="create_card_modal" class="modal" hx-on:close-card-modal="this.close()">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg mb-4">New Card</h3>
+        <div id="create_card_modal_body">
+            <span class="loading loading-spinner loading-md"></span>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>

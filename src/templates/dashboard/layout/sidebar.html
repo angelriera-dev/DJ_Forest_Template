@@ -1,33 +1,61 @@
-<aside id="sidebar" class="hidden lg:fixed lg:top-16 lg:left-0 lg:z-30 lg:flex lg:h-[calc(100vh-5rem)] lg:w-72 lg:flex-col lg:border-r lg:border-base-200 lg:bg-base-100">
-  <div class="flex items-center gap-3 px-6 py-5 border-b border-base-200">
-    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-content">
-      <i class="fa-solid fa-chart-line text-sm"></i>
-    </div>
-    <div>
-      <p class="text-sm font-semibold leading-none">Workspace</p>
-      <p class="mt-1 text-xs text-base-content/50">Product dashboard</p>
-    </div>
+<!-- hidden
+lg:top-16
+lg:left-0
+lg:z-30
+lg:flex
+lg:w-72 -->
+<aside id="sidebar" class="
+fixed
+h-full
+flex
+  flex-col
+  border-r
+  border-base-200
+  bg-base-100">
+
+
+  <div class="flex items-center gap-3 border-200/60  p-4 rounded-box w-full">
+
+    {% include 'components/Layout/Brand.html' %}
   </div>
 
-  <nav class="flex-1 p-4">
-    <ul class="menu rounded-box gap-1">
-      <li><a href="{% url 'dashboard:home' %}" class="sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><i class="fa-solid fa-house w-4"></i>Overview</a></li>
-      <li><a href="{% url 'dashboard:profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><i class="fa-solid fa-user w-4"></i>Profile</a></li>
-      <li><a href="{% url 'dashboard:settings' %}" class="sidebar-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}"><i class="fa-solid fa-gear w-4"></i>Settings</a></li>
-      <li><a href="{% url 'dashboard:subscription_plans' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subscription_plans' %}active{% endif %}"><i class="fa-solid fa-credit-card w-4"></i>Plans</a></li>
+  <nav class="mb-auto flex-1 p-4">
+    <ul class="menu rounded-box gap-1 w-full">
+      {% for link in nav_items %}
+      {% url link.url as current_url %}
+      <li>
+        <a href="{{ current_url }}"
+          class="{% if request.path == current_url %}menu-active{% endif %} flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors">
+
+          {% if link.icon|slice:":3" == "fa-" %}
+
+          <i class="{{ link.icon }} w-5 text-center text-base-content/60 leading-none"></i>
+          {% else %}
+          <span>{{ link.icon }}</span>
+          {% endif %}
+
+          <span>{{ link.name }}</span>
+
+
+
+        </a>
+      </li>
+      {% endfor %}
     </ul>
   </nav>
 
-  <div class="border-t border-base-200 p-4">
-    <div class="rounded-box bg-base-200/60 p-4">
-      <p class="text-sm font-medium">Account</p>
-      <p class="mt-1 text-xs text-base-content/60">{{ user.email }}</p>
-      <div class="mt-4 flex items-center gap-2">
-        <a href="{% url 'account_logout' %}" class="btn btn-ghost btn-sm btn-block justify-start px-0 text-base-content/70 hover:text-error">
-          <i class="fa-solid fa-right-from-bracket w-4 text-error/70"></i>
-          Log out
-        </a>
-      </div>
+
+  <!-- footer -->
+  <div class="mt-auto border-t border-base-200 bg-base-200/60 p-4">
+    <p class="text-sm font-medium">Account</p>
+    <p class="mt-1 text-xs text-base-content/60">{{ user.email }}</p>
+    <div class="mt-4 flex items-center gap-2">
+      <a href="{% url 'account_logout' %}"
+        class="btn btn-ghost btn-sm btn-block justify-start px-0 text-base-content/70 hover:text-error">
+        <i class="fa-solid fa-right-from-bracket w-4 text-error/70"></i>
+        Log out
+      </a>
     </div>
   </div>
+
 </aside>

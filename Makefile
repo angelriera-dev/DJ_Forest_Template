@@ -16,14 +16,9 @@ SRC_DIR := src
 
 init:
 	uv sync
-	@if [ -e ".env" ]; then \
-	    echo ".env already exists. Skipping creation."; \
-	else \
-	    echo "Creating .env from .env.example..."; \
-	    cp .env.example .env; \
-	fi
+
 dev:
-	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev
+	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev 0.0.0.0:8000
 
 staging:
 	$(UV_CMD) run src/manage.py runserver --settings=config.settings.staging
@@ -51,22 +46,24 @@ migrate:
 # ========================= QUALITY TEST ============================
 # ===================================================================
 
-autotype:
+check_code autotype:
+	$(UV_CMD) run ruff check --fix
+	$(UV_CMD) run ruff format --check $(SRC_DIR)
 	$(UV_CMD) run righttyper \
 		--output-files \
 		--overwrite \
 		--include-files '^(?!.*(migrations|tests|settings|wsgi|asgi|manage)).*\.py$$' \
-		-m pytest --continue-on-collection-errors
+		-m pytest $(SRC_DIR) --continue-on-collection-errors
 	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
 	$(UV_CMD) run ruff format $(SRC_DIR)
 	$(UV_CMD) run pyright $(SRC_DIR)
+
 	@echo "✅ Autotipado completo. Revisa con: git diff"
 
 pytest:
-	$(UV_CMD) run  pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
+	$(UV_CMD) run pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
 
 cs:
-	$(UV_CMD) run ruff check $(SRC_DIR)
 	@echo "Running Bandit (Security Linter)..."
 	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit
 	@echo "Running Semgrep (OWASP Scans)..."
@@ -75,8 +72,8 @@ cs:
 test: cs pytest
 
 clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage
+	find . -type d -name "__pycache__" -exec rm -rf {} + 
+	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage **/*.sqlite3
 
 
 # ===============================================================
@@ -115,7 +112,7 @@ temp:
 # ===================== TEMPLATE REPOSITORY WORKFLOW =================
 # ===================================================================
 
-TEMPLATE_URL := https://github.com/angelriera-dev/Sass_Forest_Bolier.git
+TEMPLATE_URL := https://github.com/angelriera-dev/Saas_Forest_Bolier.git
 
 template-init:
 	@echo "Configuring upstream template for Extensible mode..."
@@ -126,3 +123,28 @@ template-sync:
 	@git checkout -b update-template
 	@git fetch template
 	@git merge --squash --allow-unrelated-histories template/main
+
+# Reverse workflow: contribute clean commits back to template (PR to template/main).
+# Branch starts from template/main, so the PR shows only your chosen diff, not origin history.
+TEMPLATE_BRANCH ?= main
+TEMPLATE_CONTRIB_BRANCH ?= contribute-to-template
+
+template-contribute:
+	git fetch template
+	git checkout -b $(TEMPLATE_CONTRIB_BRANCH) template/$(TEMPLATE_BRANCH)
+	@echo "Rama '$(TEMPLATE_CONTRIB_BRANCH)' creada desde template/$(TEMPLATE_BRANCH)."
+	@echo "Trae SOLO los archivos que quieras aportar (desde tu rama/commit actual):"
+	@echo "  git checkout <tu-rama> -- ruta/archivo        # archivo completo"
+	@echo "  git restore --source=<tu-rama> --patch -- ruta/archivo   # hunks selectivos"
+	@echo "  git add ruta/archivo && git commit -m 'feat: ...'   # commit controlado"
+	@echo "Repite para cada cambio. Luego abre el PR:"
+	@echo "  git push template $(TEMPLATE_CONTRIB_BRANCH)"
+	@echo "  gh pr create --repo angelriera-dev/Saas_Forest_Bolier --base $(TEMPLATE_BRANCH) --head $(TEMPLATE_CONTRIB_BRANCH)"
+
+# Push the contribution branch to the template remote.
+template-contribute-push:
+	git push template $(TEMPLATE_CONTRIB_BRANCH)
+
+# Integrity gate: abort if the diff vs template/main has forbidden/project-private files.
+template-pr-check:
+	SKILLS/local-architecture-templates/scripts/template-pr-check.sh

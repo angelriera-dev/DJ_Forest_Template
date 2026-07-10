@@ -52,18 +52,18 @@ To start a new SaaS project while maintaining the ability to pull future securit
 
 **Option A: Extensible Mode (Authoritative)**
 Use the template as a base, modify any file freely, and manually merge upstream updates taking only what you need.
-1. Click **[Use this template](https://github.com/new?template_name=Sass_Forest_Bolier&template_owner=angelriera-dev)** to create your new repository.
+1. Click **[Use this template](https://github.com/new?template_name=Saas_Forest_Bolier&template_owner=angelriera-dev)** to create your new repository.
 2. Clone your repository and configure the upstream tracking:
    ```bash
    git clone https://github.com/YOUR-USERNAME/YOUR-NEW-REPO.git
    cd YOUR-NEW-REPO
    make saas-init
-   # Or using raw bash: git remote add template https://github.com/angelriera-dev/Sass_Forest_Bolier.git
+   # Or using raw bash: git remote add template https://github.com/angelriera-dev/Saas_Forest_Bolier.git
    ```
 
 **Option B: Collaborative Mode (Strict & Protected)**
 Sync from the template and avoid modifying core files locally. This mode installs a local Git hook that blocks accidental modifications to template-owned files (like `config/` and `components/`) to prevent merge conflicts.
-1. Click **[Use this template](https://github.com/new?template_name=Sass_Forest_Bolier&template_owner=angelriera-dev)**.
+1. Click **[Use this template](https://github.com/new?template_name=Saas_Forest_Bolier&template_owner=angelriera-dev)**.
 2. Clone and install the protection hooks:
    ```bash
    git clone https://github.com/YOUR-USERNAME/YOUR-NEW-REPO.git
@@ -71,7 +71,7 @@ Sync from the template and avoid modifying core files locally. This mode install
    make saas-collab
 
    # Or using raw bash:
-   # git remote add template https://github.com/angelriera-dev/Sass_Forest_Bolier.git
+   # git remote add template https://github.com/angelriera-dev/Saas_Forest_Bolier.git
    # echo -e '#!/bin/sh\nif git diff --cached --name-only | grep -E "^(src/config/|src/templates/components/|SKILLS/)"; then echo "\\n[BLOCK] ERROR: Protected files modified!\\n"; exit 1; fi\nif git diff --cached --name-only | grep -E "^src/apps/users/"; then echo "\\n[WARN] Modifying apps/users.\\n"; fi' > .git/hooks/pre-commit
    # chmod +x .git/hooks/pre-commit
    ```

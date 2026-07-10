@@ -7,7 +7,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
@@ -36,28 +35,22 @@ def dashboard_home(request: HttpRequest) -> HttpResponse:
             "time": joined,
         },
     ]
-    quick_actions: list[dict[str, str]] = [
-        {
-            "href": reverse("dashboard:profile"),
-            "icon": "fa-solid fa-user-pen",
-            "text": "Edit profile",
-        },
-        {
-            "href": reverse("dashboard:settings"),
-            "icon": "fa-solid fa-gear",
-            "text": "Settings",
-        },
-        {
-            "href": reverse("dashboard:subscription_plans"),
-            "icon": "fa-solid fa-arrow-up-right-from-square",
-            "text": "Upgrade plan",
-        },
-    ]
+
     return render(
         request,
         "dashboard/home.html",
-        {"activities": activities, "quick_actions": quick_actions},
+        {
+            "activities": activities,
+        },
     )
+
+
+def landing(request: HttpRequest) -> HttpResponse:
+
+    if request.user.is_authenticated:
+        return redirect("dashboard:home")
+
+    return render(request, "landing.html")
 
 
 @login_required
