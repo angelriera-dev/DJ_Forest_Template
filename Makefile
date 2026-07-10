@@ -48,14 +48,15 @@ migrate:
 
 check_code autotype:
 	$(UV_CMD) run ruff check --fix
+	$(UV_CMD) run ruff format --check $(SRC_DIR)
 	$(UV_CMD) run righttyper \
 		--output-files \
 		--overwrite \
 		--include-files '^(?!.*(migrations|tests|settings|wsgi|asgi|manage)).*\.py$$' \
 		-m pytest $(SRC_DIR) --continue-on-collection-errors
 	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
-	$(UV_CMD) run ruff format $(SRC_DIR)`
-	$(UV_CMD) pyright $(SRC_DIR)
+	$(UV_CMD) run ruff format $(SRC_DIR)
+	$(UV_CMD) run pyright $(SRC_DIR)
 
 	@echo "✅ Autotipado completo. Revisa con: git diff"
 

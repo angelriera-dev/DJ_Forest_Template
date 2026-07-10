@@ -32,7 +32,6 @@ class DashboardAccessTests(TestCase):
         self.assertContains(response, "sidebar")
         self.assertContains(response, "Toggle theme")
 
-
     def test_settings_page_renders_new_ui_sections(self) -> None:
         password = "testpass123"  # noqa: S105
         user = User.objects.create_user(email="test@example.com", password=password)

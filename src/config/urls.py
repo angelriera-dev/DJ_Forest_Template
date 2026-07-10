@@ -19,8 +19,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-api_urlpatterns = [
-]
+api_urlpatterns = []
 
 
 urlpatterns = [
@@ -28,7 +27,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("", include("apps.dashboard.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
-    path("api/", include((api_urlpatterns, "api"))),
+    path("api/", include((api_urlpatterns, "api"))),  # type: ignore
 ]
 
 
