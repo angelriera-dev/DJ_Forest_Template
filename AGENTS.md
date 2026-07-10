@@ -23,11 +23,18 @@ version: "1.0"
 - Security tests (ownership properties, input validation, rate limits).
 
 ## Standards & Methodology
-- **Security**: OWASP Top 10 2026 mitigations are non-negotiable.
-- **TDD (Mandatory)**: `pytest-django`, Red-Green-Refactor, >85% coverage.
-- **English-only**: All agent outputs.
-- **Governance**: Follow `docs/workflow-governance.md` for any architecture/workflow change.
-- **Reference**: Treat this file as the primary agent orientation; consult `docs/` and `SKILLS/` for operational details.
+**General methodology:** Short iterations (1–2 weeks), focus on the **core loop** of the <app_name> from the very first weeks.
+
+## Template Integration (Surgical Workflow)
+
+Any integration with the `template` remote (contributions or syncs) MUST use the **Surgical Integration Workflow**.
+
+- **Rule**: Never use standard git merge/squash for template contributions.
+- **Protocol**: 
+  1. Create a branch from `template/main`.
+  2. Use `scripts/template-contribute.sh` to stage only intended files.
+  3. Validate with `scripts/template-pr-check.sh` before pushing.
+- **Reference**: See `SKILLS/local-architecture-templates/SKILL.md` for the full procedure.
 
 ## Tech Stack
 | Layer | Technology |
@@ -100,8 +107,28 @@ Do **not** jump directly into implementation. Update project context first.
 3. **TDD + Secure by Design**
 4. **Update the formal process document**
    - Keep `docs/workflow-governance.md` aligned with the required sequence and checklists.
-5. **Validate**
-   - Run the relevant checks, at minimum `make check_code` and `make cs`.
+5. **Record the change**
+   - Add a `CHANGELOG.md` entry summarizing the governance update and affected files.
+6. **Only then implement**
+   - Make code or template changes after the context and instructions are synchronized.
+7. **Validate**
+   - Run the relevant checks, at minimum `make test`, `make lint`, and `make type-check` when applicable.
+
+### Non-Negotiable Rules
+
+- Any workflow or stack migration requires an ADR before implementation.
+- Any new integration that changes project conventions must update both `AGENTS.md` and the relevant `SKILL.md`.
+- Skills must stay concise and use progressive disclosure; put detailed procedures in focused docs and reference them.
+- If a file becomes stale after a migration, update it in the same change rather than leaving conflicting instructions behind.
+
+## Avoid redundant files rule
+
+- Purpose: Prevent creating new files that duplicate information or decision-making content already captured in the chat.
+- When to apply: Before creating any file for a change, check if the same information or decisions already exist in the chat.
+If the content (context, rationale, decisions, or action items) is present in chat, do NOT create a file; keep it in the chat only.
+If a file is necessary, include only unique, concise content that is not stored in chat (no duplicate rationale, decisions, or full context).
+- File names: use clear, minimal names indicating unique purpose (e.g., "migration-script.sh" — not "decision-notes.txt").
+- Verification: Require one explicit check step: "Checked chat for existing decisions: YES/NO" recorded in the file metadata.
 
 ## Pre-Commit & Verification Workflow
 
