@@ -99,8 +99,9 @@ Do **not** jump directly into implementation. Update project context first.
 ### Required Sequence
 
 1. **Create/Switch Worktree**
-   - Before any planning, create a dedicated Git worktree for the task if one does not exist (e.g., `git worktree add ../<task-name> <branch-name>`).
+   - Before any planning, create a dedicated Git worktree for the task if one does not exist under the project root's worktree container (e.g., `git worktree add ./worktree/<task-name> <branch-name>`).
    - All subsequent work MUST be performed within this worktree.
+   - **Crucial**: Sub-agents MUST NOT create new worktrees; they inherit the context and must run with the corresponding `workdir` lock. No code modifications are allowed outside this designated space.
 2. **Write or update an ADR**
    - Create or revise a file in `docs/adr/`.
    - Record scope, motivation, constraints, tradeoffs, rollout, and rollback.

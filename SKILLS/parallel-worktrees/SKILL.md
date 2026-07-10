@@ -18,9 +18,11 @@ metadata:
 ## Critical Patterns
 
 - **Isolation**: One agent = One worktree = One branch.
-- **Root Context**: Worktrees must reside *under* the project root directory so Engram persistent memory finds the expected context.
+- **Root Context**: Worktrees must reside *under* the project root directory (e.g. `./worktree/<worktree-name>`) so Engram persistent memory finds the expected context.
 - **Git Hygiene**: `.gitignore` MUST include the worktree container directory (e.g., `worktree/`).
 - **No Manual Switches**: Never try to make multiple agents work on the same folder using `git checkout`.
+- **Sub-Agent Constraint**: Sub-agents MUST NOT invoke git worktree commands. They inherit the locked workspace and must execute all operations strictly inside their designated `workdir`.
+- **Orchestrator Enforcement**: The root orchestrator is sole responsible for creating and cleaning worktrees, and launching sub-agents with `workdir` pointed to the worktree path.
 
 ## Commands
 
