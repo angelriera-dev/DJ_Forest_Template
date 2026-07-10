@@ -91,13 +91,16 @@ Do **not** jump directly into implementation. Update project context first.
 
 ### Required Sequence
 
-1. **Write or update an ADR**
+1. **Create/Switch Worktree**
+   - Before any planning, create a dedicated Git worktree for the task if one does not exist (e.g., `git worktree add ../<task-name> <branch-name>`).
+   - All subsequent work MUST be performed within this worktree.
+2. **Write or update an ADR**
    - Create or revise a file in `docs/adr/`.
    - Record scope, motivation, constraints, tradeoffs, rollout, and rollback.
-2. **TDD + Secure by Design**
-3. **Update the formal process document**
+3. **TDD + Secure by Design**
+4. **Update the formal process document**
    - Keep `docs/workflow-governance.md` aligned with the required sequence and checklists.
-4. **Validate**
+5. **Validate**
    - Run the relevant checks, at minimum `make check_code` and `make cs`.
 
 ## Pre-Commit & Verification Workflow
