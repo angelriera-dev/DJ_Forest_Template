@@ -1,2 +1,2 @@
 [bandit]
-exclude: src/apps/*/tests.py,src/apps/*/tests/*
+exclude: src/apps/*/tests.py,src/apps/*/tests/*,src/config/settings/tests/*
