@@ -52,6 +52,9 @@ migrate: ## Apply migrations
 # ========================= QUALITY TEST ============================
 # ===================================================================
 
+install-git-hooks: ## Install the configured repository pre-commit hook
+	$(UV_CMD) run pre-commit install --hook-type pre-commit
+
 check_code autotype: ## Lint, format, autotype and type-check
 	$(UV_CMD) run ruff check --fix
 	$(UV_CMD) run ruff format --check $(SRC_DIR)
@@ -78,7 +81,7 @@ cs: ## Run Bandit + Semgrep security scans
 test: cs pytest ## Run security scans + tests
 
 clean: ## Remove caches, coverage data and sqlite files
-	find . -type d -name "__pycache__" -exec rm -rf {} + 
+	find . -type d -name "__pycache__" -exec rm -rf {} +
 	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage **/*.sqlite3
 
 
