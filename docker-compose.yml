@@ -1,9 +1,68 @@
 services:
-  app:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Run make env and set POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: postgres
+      DEV_DB_NAME: ${DB_NAME:-django_dev}
+      DEV_DB_USER: ${DB_USER:-django_dev}
+      DEV_DB_PASSWORD: ${DB_PASSWORD:?Run make env and set DB_PASSWORD}
+      STAGING_DB_NAME: ${STAGING_DB_NAME:-django_staging}
+      STAGING_DB_USER: ${STAGING_DB_USER:-django_staging}
+      STAGING_DB_PASSWORD: ${STAGING_DB_PASSWORD:?Run make env and set STAGING_DB_PASSWORD}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - ./.docker/postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sh:/docker-entrypoint-initdb.d/01-create-app-databases.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dev:
     build:
       context: .
       dockerfile: docker/dev.Dockerfile
-    network_mode: host
     working_dir: /app
+    environment:
+      DJANGO_ENV: dev
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Run make env first}
+      DB_NAME: ${DB_NAME:-django_dev}
+      DB_USER: ${DB_USER:-django_dev}
+      DB_PASSWORD: ${DB_PASSWORD:?Run make env first}
+      DB_HOST: db
+      DB_PORT: 5432
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:8000}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
     volumes:
-      - .:/app
+      - ./src:/app/src
+
+  staging:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DJANGO_ENV: staging
+      DJANGO_SECRET_KEY: ${STAGING_DJANGO_SECRET_KEY:?Run make env first}
+      DATABASE_URL: ${STAGING_DATABASE_URL:-}
+      DB_NAME: ${STAGING_DB_NAME:-django_staging}
+      DB_USER: ${STAGING_DB_USER:-django_staging}
+      DB_PASSWORD: ${STAGING_DB_PASSWORD:?Run make env first}
+      DB_HOST: db
+      DB_PORT: 5432
+      ALLOWED_HOSTS: ${STAGING_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      CSRF_TRUSTED_ORIGINS: ${STAGING_CSRF_TRUSTED_ORIGINS:-http://localhost:8001}
+      PORT: 8080
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8080"

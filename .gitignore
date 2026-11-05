@@ -130,6 +130,7 @@ celerybeat.pid
 
 # Environments
 .env
+.docker/postgres-data/
 .venv
 .temp_venv
 env/

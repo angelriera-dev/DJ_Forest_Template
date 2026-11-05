@@ -35,7 +35,7 @@ Unlike generic boilerplates, Django Fortress is built to be a learning tool for 
 | **Backend** | Django 6.0 (Python 3.12+) |
 | **Frontend** | HTMX + Alpine.js + Tailwind CSS + DaisyUI |
 | **Identity** | django-allauth (Email-first, MFA Ready) |
-| **Database** | SQLite (Dev) / PostgreSQL (Prod) |
+| **Database** | PostgreSQL (Dev, Staging, Production) |
 | **Quality** | Ruff (Linter), Pyright (Static Typing) |
 | **Security** | Bandit (SAST), Semgrep (OWASP Scans) |
 | **Testing** | Pytest + Pytest-Django (Strict TDD Mode) |
@@ -78,26 +78,36 @@ Sync from the template and avoid modifying core files locally. This mode install
 
 *(To pull future template updates to your SaaS, run `make saas-sync` or `git fetch template && git merge template/main --allow-unrelated-histories`)*.
 
-### 2. Local Installation
+### 2. Local Environments
+
+Create the ignored local environment file once, then choose host-based or container-based development:
 ```bash
-make install
+make env             # copies env.example only when .env is absent
+make dev             # host Django process + local PostgreSQL
+# or
+make dev_container   # development container + local PostgreSQL
 ```
 
-### 3. Database & Data
+The development app is available at `http://localhost:8000`. Local staging uses the production runtime image with separate database credentials:
+```bash
+make staging         # http://localhost:8001
+make clear_container # stops this Compose project; preserves PostgreSQL data
+```
+
+Apply schema changes explicitly after starting the relevant environment:
 ```bash
 make migrate
-# Seed admin (admin@example.com / admin123) and plans
-.venv/bin/python src/manage.py seed_data
+# Or, from a running container:
+docker compose exec dev python src/manage.py migrate
+docker compose exec staging python src/manage.py migrate
 ```
 
-### 4. Run Development Server
-```bash
-make run
-```
+See [Local Docker Environments](docs/docker-environments.md) for database persistence, optional staging database URLs, and cloud configuration requirements.
 
-### 5. Quality Suite (Run before every commit)
+### 3. Quality Suite (Run before every commit)
 ```bash
 make check_code
+make test
 ```
 
 ---
@@ -114,11 +124,14 @@ We follow the **`src/` layout** to separate core source code from configuration 
 │   │   └── dashboard/  # Business Logic & UI
 │   ├── config/         # Central Configuration
 │   │   └── settings/   # Modular, Adaptive Settings
-│   ├── templates/      # Shared Components & Layouts
-│   └── requirements/   # Segmented Dependencies
-├── docs/               # PDR, ADRs, and Governance
-├── Makefile            # Unified Command Entry Point
-└── pyproject.toml      # Tooling Configuration
+│   └── templates/      # Shared Components & Layouts
+├── docker/             # Development image and PostgreSQL initialization
+├── Dockerfile          # Shared staging/production runtime image
+├── docker-compose.yml  # Local database and application services
+├── docs/               # ADRs and operator documentation
+├── env.example         # Tracked local environment template
+├── Makefile            # Local workflow entry point
+└── pyproject.toml      # Dependencies and tooling configuration
 ```
 
 ---

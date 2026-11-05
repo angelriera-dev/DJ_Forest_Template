@@ -22,17 +22,18 @@ help: ## Show this help
 # =========================== ENVIRONMENT ===========================
 # ===================================================================
 
+env: ## Create the local .env from env.example only if it does not exist
+	@if [ ! -f .env ]; then (umask 077 && cp env.example .env); echo "Created .env; review its local-only values."; else echo ".env already exists; leaving it unchanged."; fi
+
 init: ## Sync dependencies with UV
 	uv sync
 
-dev: ## Run dev server (port 8000)
+dev: env ## Run the development server with local PostgreSQL (port 8000)
+	@docker compose up --detach --wait db
 	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev 0.0.0.0:8000
 
-staging: ## Run staging server
-	$(UV_CMD) run src/manage.py runserver --settings=config.settings.staging
-
-prod: ## Run prod server
-	$(UV_CMD) run src/manage.py runserver --settings=config.settings.prod
+staging: env ## Run the staging image against isolated local PostgreSQL (port 8001)
+	@docker compose up --build staging
 
 
 clear_migrations: ## Remove ALL migrations (destructive, interactive)
@@ -86,18 +87,14 @@ clean: ## Remove caches, coverage data and sqlite files
 # ========================== DOCKER =============================
 # ===============================================================
 
-APP_NAME := app
+APP_NAME := dev
 
-dev_container: ## Start Docker dev containers and exec into app
-	@docker compose up -d --build
+dev_container: env ## Start the development app and PostgreSQL containers, then open a shell
+	@docker compose up -d --build $(APP_NAME)
 	@docker compose exec $(APP_NAME) bash
 
-clear_container: ## Stop and remove Docker dev containers
+clear_container rm-containers: ## Stop this project's containers without deleting PostgreSQL data
 	@docker compose down
-
-rm-containers:
-	@ids="$(shell docker ps -aq)"; \
-	if [ -n "$$ids" ]; then docker stop $$ids && docker rm $$ids; else echo "no containers"; fi
 
 
 temp:
