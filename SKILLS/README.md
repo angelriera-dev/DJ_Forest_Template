@@ -6,10 +6,7 @@ Project-local reusable skills for Django Fortress SaaS development.
 
 All skills are located in `SKILLS/` and follow the [agentskills.io specification](https://agentskills.io/specification).
 
-Each skill folder contains:
-- `SKILL.md` — Complete skill definition with YAML frontmatter and Markdown documentation
-- `references/` — External URLs, documentation links, and resources
-- `assets/` — Templates, code snippets, and example files
+Each skill folder contains a `SKILL.md` definition. A skill may also include `references/` or `assets/` when they add useful supporting material.
 
 ---
 
@@ -77,37 +74,45 @@ Django allauth setup, configuration, and template patterns.
 
 ---
 
-### Documentation Skills
+### Workflow Skills
+
+#### parallel-worktrees
+**Path**: `SKILLS/parallel-worktrees/SKILL.md`
+**Version**: 1.1
+
+**Trigger**: Feature or parallel Git worktrees, docs submodules, or branch isolation. Covers the root worktree plus the separate docs-submodule worktree and gitlink lifecycle.
+
+#### local-work-unit-commits
+**Path**: `SKILLS/local-work-unit-commits/SKILL.md`
+**Version**: 1.0
+
+**Trigger**: Multi-step implementation, commit planning, or any Git commit request. Defines task-scoped staging, pre-commit checks, and explicit approval before every individual commit.
+
+#### template-repo-workflow
+**Path**: `SKILLS/template-repo-workflow/SKILL.md`
+**Version**: 1.1
+
+**Trigger**: Initializing or syncing downstream SaaS projects, collaborative/extensible mode, or contributing changes to the upstream template.
+
+### Project Architecture Skills
 
 #### local-architecture-docs
 **Path**: `SKILLS/local-architecture-docs/SKILL.md`
-**Version**: 2.0
-**Author**: rag
+**Version**: 2.1
 
-Local architecture guidance for the `docs/` folder.
+**Trigger**: Editing documentation, ADRs, indexes, or governance rules. Covers the `docs/` Git submodule, its independent worktree/branch, and parent gitlink.
 
-**Trigger**: When editing documentation in `docs/`, ADRs, governance docs, or documentation indexes.
+#### local-architecture-routing
+**Path**: `SKILLS/local-architecture-routing/SKILL.md`
+**Version**: 1.0
 
-**When to Use**:
-- Adding or updating documentation in `docs/` folder
-- Preparing change reports or implementation summaries
-- Documenting architectural decisions (ADRs)
-- Creating feature walkthroughs or setup guides
+**Trigger**: Creating or modifying Django URL patterns, app routes, HTMX endpoints, or API versioning.
 
 #### local-architecture-templates
 **Path**: `SKILLS/local-architecture-templates/SKILL.md`
 **Version**: 2.2
-**Author**: rag
 
-Local architecture guidance for the `templates/` folder.
-
-**Trigger**: When modifying templates, components, or template conventions in `templates/`.
-
-**When to Use**:
-- Creating or modifying any template in `templates/`
-- Adding new components to `templates/components/`
-- Refactoring existing templates
-- Applying consistent styling across templates
+**Trigger**: Modifying Django templates, components, rendering, or styling conventions.
 
 ---
 

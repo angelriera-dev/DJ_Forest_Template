@@ -8,7 +8,7 @@ description: >
 license: MIT
 metadata:
   author: rag
-  version: "2.0"
+  version: "2.1"
 ---
 
 ## When to Use
@@ -29,21 +29,31 @@ If the task changes project-wide workflow, architecture, or integration rules, f
 - Key decision records: `docs/adr/`
 - Governance process: `docs/workflow-governance.md`
 
+## Git Submodule Rules
+
+The project-root `docs/` directory is a separate Git wiki submodule. Read `docs/SKILL.md` and `docs/workflow-governance.md` for its full lifecycle.
+
+- Check `git submodule status docs`; do not edit an uninitialized path.
+- In a task worktree, keep a separate docs worktree/branch at the exact root gitlink. Verify the docs `HEAD` matches `git rev-parse :docs` before editing.
+- Commit wiki content in its own repository and feature branch. The root repository records that commit later as the `docs` gitlink; these are distinct commits and require separate user approval.
+- The root repository's Git hooks do not automatically run inside the docs submodule. Review and obtain approval for each docs commit separately.
+- If publishing is later authorized, publish the wiki commit before the parent commit that references it.
+
 ## Core Rules
 
 1. Keep documentation concise and canonical.
 2. Link to files instead of duplicating large content blocks.
 3. Put governance process details in `docs/workflow-governance.md`, not in multiple files.
-4. Record governance-impacting changes in `CHANGELOG.md`.
+4. Record verified user-facing changes in the parent repository's `CHANGELOG.md` before the corresponding commit.
 5. Keep documentation in English.
 
 ## Default Procedure
 
-1. Classify the change as local-only or governance-impacting.
-2. Update or add the relevant doc in `docs/`.
-3. If conventions changed, update the related ADR and agent context files.
-4. Update `CHANGELOG.md`.
-5. Validate referenced paths and commands.
+1. Classify the change as local-only or governance-impacting and verify the docs submodule/worktree state.
+2. For governance changes, update the ADR and process context before source implementation.
+3. After implementation and verification, update the affected user-facing docs and parent `CHANGELOG.md` before their commit.
+4. Validate referenced paths and commands in the correct repository context.
+5. Show the exact staged diff and obtain explicit approval before each commit; never infer permission to publish.
 
 ## Reference
 
