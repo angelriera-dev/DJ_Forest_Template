@@ -54,6 +54,7 @@ migrate: ## Apply migrations
 
 install-git-hooks: ## Install the configured repository pre-commit hook
 	$(UV_CMD) run pre-commit install --hook-type pre-commit
+	$(UV_CMD) run pre-commit install --hook-type commit-msg
 
 check_code autotype: ## Lint, format, autotype and type-check
 	$(UV_CMD) run ruff check --fix

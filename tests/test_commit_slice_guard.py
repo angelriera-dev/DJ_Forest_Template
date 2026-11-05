@@ -178,6 +178,8 @@ def test_keeps_existing_precommit_hooks_and_registers_slice_guard() -> None:
     assert "id: ruff" in text
     assert "id: ruff-format" in text
     assert "id: commit-slice-guard" in text
+    assert "id: commit-message-guard" in text
+    assert "stages: [commit-msg]" in text
 
 
 def test_make_target_installs_pre_commit_hook() -> None:
@@ -186,3 +188,4 @@ def test_make_target_installs_pre_commit_hook() -> None:
 
     assert "install-git-hooks:" in text
     assert "pre-commit install --hook-type pre-commit" in text
+    assert "pre-commit install --hook-type commit-msg" in text
