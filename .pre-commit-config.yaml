@@ -30,3 +30,17 @@ repos:
         args: [ --fix ]
       # Run the formatter.
       - id: ruff-format
+
+-   repo: local
+    hooks:
+    -   id: commit-slice-guard
+        name: Check staged changes fit one ODD work unit
+        entry: python3 scripts/commit_slice_guard.py
+        language: system
+        pass_filenames: false
+        always_run: true
+    -   id: commit-message-guard
+        name: Check commit message Work-Unit trailer
+        entry: python3 scripts/commit_message_guard.py
+        language: system
+        stages: [commit-msg]

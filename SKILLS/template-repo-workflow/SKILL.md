@@ -1,11 +1,11 @@
 ---
-name: saas-workflow
+name: template-repo-workflow
 description: >
   Use this skill to understand the workflow and constraints when a SaaS project
   is derived from this template, specifically the Extensible and Collaborative modes.
 license: MIT
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 ## When to Use

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-05 - Agent workflow and commit governance
+- Documented isolated feature/docs worktrees and task-scoped commits with staged-path and 400-line guards.
+- Added a matching `Work-Unit` commit-message trailer check and explicit approval before each commit.
+- Aligned workflow guidance and skill indexes; recorded the existing documentation-submodule commit and its root gitlink process.
+
 ## 2026-11-05 - Local and Deployment Environment Configuration
 - Added isolated dev/staging PostgreSQL databases, environment-aware Django settings, and a portable runtime image that defaults to production and fails closed when configuration is missing.
 - Added safe local `.env` initialization, persistent project-local database storage, and operator guidance; no cloud deployment or email integration.

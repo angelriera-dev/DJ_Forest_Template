@@ -30,7 +30,7 @@ version: "1.0"
 Any integration with the `template` remote (contributions or syncs) MUST use the **Surgical Integration Workflow**.
 
 - **Rule**: Never use standard git merge/squash for template contributions.
-- **Protocol**: 
+- **Protocol**:
   1. Create a branch from `template/main`.
   2. Use `scripts/template-contribute.sh` to stage only intended files.
   3. Validate with `scripts/template-pr-check.sh` before pushing.
@@ -86,34 +86,17 @@ When instructions overlap, interpret project context in this order:
 
 ## Formal Change Governance
 
-Use this process for any of the following:
-
-- frontend workflow changes
-- architecture or stack migrations
-- new external integrations
-- new feature families that add new patterns or conventions
-- replacing an existing implementation model (for example Django components to React CDN islands)
-
-Do **not** jump directly into implementation. Update project context first.
+Use this process for frontend workflow changes, architecture or stack migrations, new external integrations, feature families that add conventions, or replacement of an existing implementation model. Synchronize durable project context before changing source code.
 
 ### Required Sequence
 
-1. **Create/Switch Worktree**
-   - Before any planning, create a dedicated Git worktree for the task if one does not exist under the project root's worktree container (e.g., `git worktree add ./worktree/<task-name> <branch-name>`).
-   - All subsequent work MUST be performed within this worktree.
-   - **Crucial**: Sub-agents MUST NOT create new worktrees; they inherit the context and must run with the corresponding `workdir` lock. No code modifications are allowed outside this designated space.
-2. **Write or update an ADR**
-   - Create or revise a file in `docs/adr/`.
-   - Record scope, motivation, constraints, tradeoffs, rollout, and rollback.
-3. **TDD + Secure by Design**
-4. **Update the formal process document**
-   - Keep `docs/workflow-governance.md` aligned with the required sequence and checklists.
-5. **Record the change**
-   - Add a `CHANGELOG.md` entry summarizing the governance update and affected files.
-6. **Only then implement**
-   - Make code or template changes after the context and instructions are synchronized.
-7. **Validate**
-   - Run the relevant checks, at minimum `make test`, `make lint`, and `make type-check` when applicable.
+1. **Create the root worktree before planning.** Use a dedicated branch and a worktree under `worktree/`. If the current branch is the default branch, create a feature branch first. Do all task edits there. Subagents inherit this worktree and must not create their own.
+2. **Check the docs submodule when documentation is in scope.** Inspect `git submodule status docs`; never edit an uninitialized path. Use a docs worktree/branch at the root worktree's exact gitlink and verify `git -C <root-worktree> rev-parse :docs` equals the docs worktree `HEAD`. Commit wiki content separately, then update the root gitlink. A root commit that references a wiki commit must not be published before that wiki commit is available remotely.
+3. **Synchronize decision context before implementation.** Create or revise an ADR in `docs/adr/` and update `docs/workflow-governance.md`, `AGENTS.md`, and relevant skills when the workflow changes. Keep the ADR concise and record scope, constraints, tradeoffs, rollout, and rollback.
+4. **Track multi-step work.** Before source edits, create `odd/tasks/<feature>.md` and its Engram mirror for large work. Each task line records its spec, route, status, allowed repository-relative `paths`, and commit evidence. Keep exactly one task `in_progress`; for feature branches, the branch suffix matches the task-file name so the commit guard can find it.
+5. **Implement and verify.** Use TDD for deterministic behavior changes. Run applicable tests and quality checks, at minimum `make test`, `make lint`, and `make type-check` when applicable.
+6. **Finalize operational docs after verification.** Update user-facing docs and the root `CHANGELOG.md` with verified facts before the relevant commit. ADR and governance context are the pre-implementation exception.
+7. **Commit only one approved work unit at a time.** Implementation authorization does not authorize commits. Before every commit, show the exact staged paths, diff summary, and message, then wait for explicit user approval for that individual commit. Stage only paths declared for the active task; do not use `git add -A`. Keep each commit to one task and at most 400 changed diff lines (additions plus deletions), splitting larger work by behavior. Include exactly one matching `Work-Unit: <feature>/<task-id>` trailer in the commit message. Install the root hooks with `make install-git-hooks`; they validate task scope, size, and the trailer but do not grant approval. Do not bypass a failed hook with `--no-verify`. Record the resulting hash in the task file. Push, PR, merge, deployment, and release require separate authorization.
 
 ### Non-Negotiable Rules
 
@@ -122,39 +105,18 @@ Do **not** jump directly into implementation. Update project context first.
 - Skills must stay concise and use progressive disclosure; put detailed procedures in focused docs and reference them.
 - If a file becomes stale after a migration, update it in the same change rather than leaving conflicting instructions behind.
 
-## Avoid redundant files rule
+## Documentation and Verification
 
-- Purpose: Prevent creating new files that duplicate information or decision-making content already captured in the chat.
-- When to apply: Before creating any file for a change, check if the same information or decisions already exist in the chat.
-If the content (context, rationale, decisions, or action items) is present in chat, do NOT create a file; keep it in the chat only.
-If a file is necessary, include only unique, concise content that is not stored in chat (no duplicate rationale, decisions, or full context).
-- File names: use clear, minimal names indicating unique purpose (e.g., "migration-script.sh" — not "decision-notes.txt").
-- Verification: Require one explicit check step: "Checked chat for existing decisions: YES/NO" recorded in the file metadata.
+- Before creating a file, check chat and the repository for duplicate content. Do not copy the conversation into documentation. Required ADRs, workflow records, and large-task specs are durable repository artifacts; keep them concise and record only project policy/evidence not already captured elsewhere. Add `chat_decisions_checked: "YES"` or `"NO"` metadata to new governance artifacts.
+- Run `make check_code && make test` when applicable; document any pre-existing failures accurately. Use a browser check for UI changes, not for unrelated backend or workflow changes.
+- Update user-facing documentation and `CHANGELOG.md` after verification and before the corresponding commit.
+- Install the root Git hooks with `make install-git-hooks`. The pre-commit hook rejects staged paths outside the active task's declared `paths` and more than 400 changed lines. The commit-msg hook requires the matching `Work-Unit: <feature>/<task-id>` trailer. These local hooks are safeguards and can be bypassed; they never replace explicit user approval.
 
-## Pre-Commit & Verification Workflow
+## Commit Approval
 
-1.  **Technical Validation**:
-    - Run `make check_code` to execute the full quality suite (lint, type-check, tests, Django checks).
-    - All checks MUST pass (clean exit). If there are existing errors, they must be addressed or explicitly documented as "pre-existing" in the PR.
-2.  **Functional Verification**:
-    - Manually verify the affected feature/view in the browser.
-3.  **User Acceptance**:
-    - Present the changes to the user with evidence (logs/screenshots if possible).
-    - Ask: "Please verify the changes in your browser. Is everything behaving correctly?"
-
-
-## Pre-Commit Workflow
-1. Run `make check_code && make test`.
-2. Commit with conventional format.
-3. Update `CHANGELOG.md`.
-4. Create PR.
-
-## Source-of-Truth Hierarchy
-1. Explicit user request
-2. `AGENTS.md`
-3. `docs/adr/`
-4. Active `SKILL.md` instructions
-5. `docs/workflow-governance.md`
+- Before **each** `git commit`, present its exact staged paths, diff summary, and commit message, and wait for explicit approval of that commit. Approval of implementation or of a previous commit does not carry over.
+- If a hook changes the index or working tree, inspect and stage the final diff again; any changed commit scope requires fresh approval.
+- Never create a combined end-of-feature commit from multiple completed tasks. Never push or create a PR unless separately authorized.
 
 ## Key Files
 | File | Purpose |
