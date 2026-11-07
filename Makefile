@@ -34,12 +34,7 @@ dev_local: env ## Run the development server with local PostgreSQL (port 8000) w
 
 
 
-# makemigrations: ## Generate migrations
-	# $(UV_CMD) run src/manage.py makemigrations
 
-
-# migrate: ## Apply migrations
-	# $(UV_CMD) run src/manage.py migrate
 
 
 # ===============================================================
@@ -62,42 +57,46 @@ clear_container rm-containers: ## Stop this project's containers without deletin
 # temp:
 	# @docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
 
+# makemigrations: ## Generate migrations
+	# $(UV_CMD) run src/manage.py makemigrations
 
+
+# migrate: ## Apply migrations
+	# $(UV_CMD) run src/manage.py migrate
 
 
 
 # ===================================================================
-# ========================= QUALITY TEST ============================
+# ========================= QUALITY & TEST ============================
 # ===================================================================
 
-install-git-hooks: ## Install the configured repository pre-commit hook
+git-hooks: ## Install the configured repository pre-commit hook
 	$(UV_CMD) run pre-commit install --hook-type pre-commit
 	$(UV_CMD) run pre-commit install --hook-type commit-msg
 
-check_code autotype: ## Lint, format, autotype and type-check
-	$(UV_CMD) run ruff check --fix
-	$(UV_CMD) run ruff format --check $(SRC_DIR)
+format: ## Infer types, auto-fix lint, format and type-check (modifies source)
 	$(UV_CMD) run righttyper \
 		--output-files \
 		--overwrite \
 		--include-files '^(?!.*(migrations|tests|settings|wsgi|asgi|manage)).*\.py$$' \
 		-m pytest $(SRC_DIR) --continue-on-collection-errors
 	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
+	$(UV_CMD) run ruff check --fix $(SRC_DIR)
 	$(UV_CMD) run ruff format $(SRC_DIR)
 	$(UV_CMD) run pyright $(SRC_DIR)
 
 	@echo "✅ Autotipado completo. Revisa con: git diff"
 
 pytest: ## Run tests with coverage
-	$(UV_CMD) run pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
+	$(UV_CMD) run pytest --cov=./$(SRC_DIR)/apps --cov-report=term-missing
+
+
 
 cs: ## Run Bandit + Semgrep security scans
 	@echo "Running Bandit (Security Linter)..."
 	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit
 	@echo "Running Semgrep (OWASP Scans)..."
 	$(UV_CMD) run semgrep scan --config auto $(SRC_DIR)
-
-test: cs pytest ## Run security scans + tests
 
 clean: ## Remove caches, coverage data and sqlite files
 	find . -type d -name "__pycache__" -exec rm -rf {} +
