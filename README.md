@@ -90,7 +90,7 @@ make dev_container   # development container + local PostgreSQL
 
 The development app is available at `http://localhost:8000`. Local staging uses the production runtime image with separate database credentials:
 ```bash
-make staging         # http://localhost:8001
+make staging         # http://localhost:8080
 make clear_container # stops this Compose project; preserves PostgreSQL data
 ```
 

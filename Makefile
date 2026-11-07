@@ -28,25 +28,42 @@ env: ## Create the local .env from env.example only if it does not exist
 init: ## Sync dependencies with UV
 	uv sync
 
-dev: env ## Run the development server with local PostgreSQL (port 8000)
+dev_local: env ## Run the development server with local PostgreSQL (port 8000) without docker for app
 	@docker compose up --detach --wait db
 	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev 0.0.0.0:8000
 
-staging: env ## Run the staging image against isolated local PostgreSQL (port 8001)
+
+
+# makemigrations: ## Generate migrations
+	# $(UV_CMD) run src/manage.py makemigrations
+
+
+# migrate: ## Apply migrations
+	# $(UV_CMD) run src/manage.py migrate
+
+
+# ===============================================================
+# ========================== DOCKER =============================
+# ===============================================================
+
+APP_NAME := dev
+
+dev: env ## Start the development app and PostgreSQL containers, then open a shell
+	@docker compose up -d --build $(APP_NAME)
+	@docker compose exec $(APP_NAME) bash
+
+staging: env ## Run the staging image against isolated local PostgreSQL (port 8080)
 	@docker compose up --build staging
 
-
-clear_migrations: ## Remove ALL migrations (destructive, interactive)
-	@echo "warning - are you sure you want to remove all migrations? [y/n]"
-	read -r answer
-	if [ "$$answer" = "y" ]; then rm -rf **/migrations/*; fi
-
-makemigrations: ## Generate migrations
-	$(UV_CMD) run src/manage.py makemigrations
+clear_container rm-containers: ## Stop this project's containers without deleting PostgreSQL data
+	@docker compose down
 
 
-migrate: ## Apply migrations
-	$(UV_CMD) run src/manage.py migrate
+# temp:
+	# @docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
+
+
+
 
 
 # ===================================================================
@@ -87,25 +104,6 @@ clean: ## Remove caches, coverage data and sqlite files
 	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage **/*.sqlite3
 
 
-# ===============================================================
-# ========================== DOCKER =============================
-# ===============================================================
-
-APP_NAME := dev
-
-dev_container: env ## Start the development app and PostgreSQL containers, then open a shell
-	@docker compose up -d --build $(APP_NAME)
-	@docker compose exec $(APP_NAME) bash
-
-clear_container rm-containers: ## Stop this project's containers without deleting PostgreSQL data
-	@docker compose down
-
-
-temp:
-	@docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
-
-
-
 # ===================================================================
 # ===================== TEMPLATE REPOSITORY WORKFLOW =================
 # ===================================================================
@@ -128,7 +126,13 @@ template-sync: ## Pull template updates into a squash-merge branch
 TEMPLATE_BRANCH ?= main
 TEMPLATE_CONTRIB_BRANCH ?= contribute-to-template
 
-template-contribute: ## Start contribution branch from template/main (guided)
+template_clear_migrations: ## Remove ALL migrations (destructive, interactive)
+	@echo "warning - are you sure you want to remove all migrations? [y/n]"
+	read -r answer
+	if [ "$$answer" = "y" ]; then rm -rf **/migrations/*; fi
+
+
+template-contribute:  template_clear_migrations ## Start contribution branch from template/main (guided)
 	git fetch template
 	git checkout -b $(TEMPLATE_CONTRIB_BRANCH) template/$(TEMPLATE_BRANCH)
 	@echo "Rama '$(TEMPLATE_CONTRIB_BRANCH)' creada desde template/$(TEMPLATE_BRANCH)."
