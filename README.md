@@ -116,7 +116,7 @@ Make targets are grouped development tools; CI is the authoritative, non-mutatin
 | Pre-commit | Ruff lint (`--fix`) and formatting on staged files, plus whitespace and commit guards. Installed with `make git-hooks`. | Yes; review and stage formatter changes before committing. |
 | CI | Checks Ruff formatting/lint and Pyright, runs Bandit/Semgrep and pytest with coverage, then uploads the coverage artifact. | No source edits. |
 
-The annotation tools have different roles: RightTyper infers from code exercised by tests, while Autotyping applies static heuristics. They run sequentially in Make; Pyright validates the resulting annotations. Autotyping is not a commit hook, avoiding a second annotation rewrite during commit. Ruff's version is aligned between the UV lock and pre-commit; Ruff and Pyright target the project's minimum Python 3.12, while CI runs on Python 3.14.
+The annotation tools have different roles: RightTyper infers from code exercised by tests, while Autotyping applies static heuristics. They run sequentially in Make; Pyright validates the resulting annotations. Autotyping is not a commit hook, avoiding a second annotation rewrite during commit. Ruff's version is aligned between the UV lock and pre-commit.
 
 ```bash
 make format
