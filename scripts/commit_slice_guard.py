@@ -163,7 +163,7 @@ def main() -> int:
     try:
         # Fixed Git query; no user-controlled input reaches the command.
         repo_root = Path(
-            subprocess.check_output(  # noqa: S603
+            subprocess.check_output(
                 ["git", "rev-parse", "--show-toplevel"],  # noqa: S607
                 text=True,
             ).strip()
