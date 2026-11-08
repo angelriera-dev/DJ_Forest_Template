@@ -28,63 +28,13 @@ env: ## Create the local .env from env.example only if it does not exist
 init: ## Sync dependencies with UV
 	uv sync
 
-dev: env ## Run the development server with local PostgreSQL (port 8000)
+dev_local: env ## Run the development server with local PostgreSQL (port 8000) without docker for app
 	@docker compose up --detach --wait db
 	$(UV_CMD) run src/manage.py runserver --settings=config.settings.dev 0.0.0.0:8000
 
-staging: env ## Run the staging image against isolated local PostgreSQL (port 8001)
-	@docker compose up --build staging
 
 
-clear_migrations: ## Remove ALL migrations (destructive, interactive)
-	@echo "warning - are you sure you want to remove all migrations? [y/n]"
-	read -r answer
-	if [ "$$answer" = "y" ]; then rm -rf **/migrations/*; fi
 
-makemigrations: ## Generate migrations
-	$(UV_CMD) run src/manage.py makemigrations
-
-
-migrate: ## Apply migrations
-	$(UV_CMD) run src/manage.py migrate
-
-
-# ===================================================================
-# ========================= QUALITY TEST ============================
-# ===================================================================
-
-install-git-hooks: ## Install the configured repository pre-commit hook
-	$(UV_CMD) run pre-commit install --hook-type pre-commit
-	$(UV_CMD) run pre-commit install --hook-type commit-msg
-
-check_code autotype: ## Lint, format, autotype and type-check
-	$(UV_CMD) run ruff check --fix
-	$(UV_CMD) run ruff format --check $(SRC_DIR)
-	$(UV_CMD) run righttyper \
-		--output-files \
-		--overwrite \
-		--include-files '^(?!.*(migrations|tests|settings|wsgi|asgi|manage)).*\.py$$' \
-		-m pytest $(SRC_DIR) --continue-on-collection-errors
-	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
-	$(UV_CMD) run ruff format $(SRC_DIR)
-	$(UV_CMD) run pyright $(SRC_DIR)
-
-	@echo "✅ Autotipado completo. Revisa con: git diff"
-
-pytest: ## Run tests with coverage
-	$(UV_CMD) run pytest --cov=$(SRC_DIR)/apps --cov-report=term-missing
-
-cs: ## Run Bandit + Semgrep security scans
-	@echo "Running Bandit (Security Linter)..."
-	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit
-	@echo "Running Semgrep (OWASP Scans)..."
-	$(UV_CMD) run semgrep scan --config auto $(SRC_DIR)
-
-test: cs pytest ## Run security scans + tests
-
-clean: ## Remove caches, coverage data and sqlite files
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage **/*.sqlite3
 
 
 # ===============================================================
@@ -93,17 +43,64 @@ clean: ## Remove caches, coverage data and sqlite files
 
 APP_NAME := dev
 
-dev_container: env ## Start the development app and PostgreSQL containers, then open a shell
+dev: env ## Start the development app and PostgreSQL containers, then open a shell
 	@docker compose up -d --build $(APP_NAME)
 	@docker compose exec $(APP_NAME) bash
+
+staging: env ## Run the staging image against isolated local PostgreSQL (port 8080)
+	@docker compose up --build staging
 
 clear_container rm-containers: ## Stop this project's containers without deleting PostgreSQL data
 	@docker compose down
 
 
-temp:
-	@docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
+# temp:
+	# @docker run -it --rm -v .:/app -w /app  python:slim /bin/bash -c "adduser --disabled-password --gecos '' --uid 1000 devuser && su devuser"
 
+# makemigrations: ## Generate migrations
+	# $(UV_CMD) run src/manage.py makemigrations
+
+
+# migrate: ## Apply migrations
+	# $(UV_CMD) run src/manage.py migrate
+
+
+
+# ===================================================================
+# ========================= QUALITY & TEST ============================
+# ===================================================================
+
+git-hooks: ## Install the configured repository pre-commit hook
+	$(UV_CMD) run pre-commit install --hook-type pre-commit
+	$(UV_CMD) run pre-commit install --hook-type commit-msg
+
+format: ## Infer types, auto-fix lint, format and type-check (modifies source)
+	$(UV_CMD) run righttyper \
+		--output-files \
+		--overwrite \
+		--include-files '^(?!.*(migrations|tests|settings|wsgi|asgi|manage)).*\.py$$' \
+		-m pytest $(SRC_DIR) --continue-on-collection-errors
+	$(UV_CMD) run autotyping $(SRC_DIR) --none-return --scalar-return --bool-param --guess-common-names
+	$(UV_CMD) run ruff check --fix $(SRC_DIR)
+	$(UV_CMD) run ruff format $(SRC_DIR)
+	$(UV_CMD) run pyright $(SRC_DIR)
+
+	@echo "✅ Autotipado completo. Revisa con: git diff"
+
+pytest: ## Run tests with coverage
+	$(UV_CMD) run pytest --cov=./$(SRC_DIR)/apps --cov-report=term-missing
+
+
+
+cs: ## Run Bandit + Semgrep security scans
+	@echo "Running Bandit (Security Linter)..."
+	$(UV_CMD) run bandit -r $(SRC_DIR)/apps/ $(SRC_DIR)/config/ --ini .bandit
+	@echo "Running Semgrep (OWASP Scans)..."
+	$(UV_CMD) run semgrep scan --config auto $(SRC_DIR)
+
+clean: ## Remove caches, coverage data and sqlite files
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	rm -rf .pytest_cache .ruff_cache .temp_venv .coverage **/*.sqlite3
 
 
 # ===================================================================
@@ -128,7 +125,13 @@ template-sync: ## Pull template updates into a squash-merge branch
 TEMPLATE_BRANCH ?= main
 TEMPLATE_CONTRIB_BRANCH ?= contribute-to-template
 
-template-contribute: ## Start contribution branch from template/main (guided)
+template_clear_migrations: ## Remove ALL migrations (destructive, interactive)
+	@echo "warning - are you sure you want to remove all migrations? [y/n]"
+	read -r answer
+	if [ "$$answer" = "y" ]; then rm -rf **/migrations/*; fi
+
+
+template-contribute:  template_clear_migrations ## Start contribution branch from template/main (guided)
 	git fetch template
 	git checkout -b $(TEMPLATE_CONTRIB_BRANCH) template/$(TEMPLATE_BRANCH)
 	@echo "Rama '$(TEMPLATE_CONTRIB_BRANCH)' creada desde template/$(TEMPLATE_BRANCH)."

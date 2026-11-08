@@ -11,7 +11,8 @@ ENV UV_COMPILE_BYTECODE=1 \
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --no-dev
+    uv sync --frozen --no-install-project --no-dev && \
+    uv add gunicorn
 
 # =============================================================================
 # STAGE 2: Non-root runtime

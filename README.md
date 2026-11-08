@@ -90,7 +90,7 @@ make dev_container   # development container + local PostgreSQL
 
 The development app is available at `http://localhost:8000`. Local staging uses the production runtime image with separate database credentials:
 ```bash
-make staging         # http://localhost:8001
+make staging         # http://localhost:8080
 make clear_container # stops this Compose project; preserves PostgreSQL data
 ```
 
@@ -104,11 +104,27 @@ docker compose exec staging python src/manage.py migrate
 
 See [Local Docker Environments](docs/docker-environments.md) for database persistence, optional staging database URLs, and cloud configuration requirements.
 
-### 3. Quality Suite (Run before every commit)
+### 3. Local Quality Tools
+
+Make targets are grouped development tools; CI is the authoritative, non-mutating gate over the full configured scope.
+
+| Command or layer | What it does | May modify files? |
+|---|---|---|
+| `make format` | RightTyper infers annotations from exercised runtime behavior; Autotyping applies heuristic annotations; Ruff fixes lint and formats; Pyright checks types last. | Yes. Review `git diff`, especially after RightTyper's `--overwrite`. |
+| `make pytest` | Runs pytest with coverage for `src/apps`. | Normally no source edits. |
+| `make cs` | Runs Bandit and Semgrep security scans. | No. |
+| Pre-commit | Ruff lint (`--fix`) and formatting on staged files, plus whitespace and commit guards. Installed with `make git-hooks`. | Yes; review and stage formatter changes before committing. |
+| CI | Checks Ruff formatting/lint and Pyright, runs Bandit/Semgrep and pytest with coverage, then uploads the coverage artifact. | No source edits. |
+
+The annotation tools have different roles: RightTyper infers from code exercised by tests, while Autotyping applies static heuristics. They run sequentially in Make; Pyright validates the resulting annotations. Autotyping is not a commit hook, avoiding a second annotation rewrite during commit. Ruff's version is aligned between the UV lock and pre-commit.
+
 ```bash
-make check_code
-make test
+make format
+make pytest
+make cs
 ```
+
+For local `act` runs, `--artifact-server-path <repo-local-dir>` starts the artifact server and supplies its runtime settings. If `upload-artifact@v7` fails with an unknown `mime_type` field, the local `act` server is incompatible with that artifact protocol; setting `ACTIONS_RUNTIME_TOKEN` manually does not fix it. Use a compatible `act` build or run the workflow in GitHub Actions.
 
 ---
 
@@ -149,7 +165,7 @@ We follow the **`src/` layout** to separate core source code from configuration 
 
 ## 🛡️ Security Enforcement
 
-The project enforces high standards via the `make check_code` gate:
+The project enforces code quality with Ruff and Pyright checks in CI; `make format` is the local auto-correction workflow:
 - **Zero Errors Policy**: Zero errors allowed in Ruff (Linting) and Pyright (Typing).
 - **Security Scans**: Automated Bandit and Semgrep scans on every build.
 - **Strict TDD**: Minimum 90% coverage target for identity and core flows.

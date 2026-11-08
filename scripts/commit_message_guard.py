@@ -13,7 +13,7 @@ from commit_slice_guard import GuardError, active_task, project_root_for
 def parse_trailers(message: str) -> list[str]:
     try:
         # Fixed Git parser; message text is passed on stdin, never as a command.
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             ["git", "interpret-trailers", "--parse"],  # noqa: S607
             input=message,
             text=True,
@@ -45,13 +45,13 @@ def main() -> int:
         if len(sys.argv) != 2:
             raise GuardError("expected the commit-message file path.")
         repo_root = Path(
-            subprocess.check_output(  # noqa: S603
+            subprocess.check_output(
                 ["git", "rev-parse", "--show-toplevel"],  # noqa: S607
                 text=True,
             ).strip()
         ).resolve()
         project_root = project_root_for(repo_root)
-        branch = subprocess.check_output(  # noqa: S603
+        branch = subprocess.check_output(
             ["git", "branch", "--show-current"],  # noqa: S607
             cwd=repo_root,
             text=True,

@@ -11,28 +11,18 @@ repos:
     # -   id: check-json
     # -   id: check-yaml
 
--   repo: https://github.com/JelleZijlstra/autotyping
-    rev: 24.9.0
-    hooks:
-    -   id: autotyping
-        args:
-        - --none-return
-        - --scalar-return
-        - --bool-param
-        - --guess-common-names
-
--   repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
-    rev: v0.9.1
-    hooks:
-      # Run the linter.
-      - id: ruff
-        args: [ --fix ]
-      # Run the formatter.
-      - id: ruff-format
-
 -   repo: local
     hooks:
+    -   id: ruff
+        name: Ruff linter
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+    -   id: ruff-format
+        name: Ruff formatter
+        entry: uv run ruff format
+        language: system
+        types: [python]
     -   id: commit-slice-guard
         name: Check staged changes fit one ODD work unit
         entry: python3 scripts/commit_slice_guard.py

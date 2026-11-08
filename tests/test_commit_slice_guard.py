@@ -186,6 +186,6 @@ def test_make_target_installs_pre_commit_hook() -> None:
     makefile = Path(__file__).resolve().parents[1] / "Makefile"
     text = makefile.read_text(encoding="utf-8")
 
-    assert "install-git-hooks:" in text
+    assert "git-hooks:" in text
     assert "pre-commit install --hook-type pre-commit" in text
     assert "pre-commit install --hook-type commit-msg" in text
